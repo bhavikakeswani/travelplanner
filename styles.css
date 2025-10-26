@@ -289,3 +289,57 @@ body {
     text-align: center;
   }
 }
+
+.input-group textarea {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: none;
+  outline: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 1rem;
+  resize: none;
+  transition: all 0.3s ease;
+}
+
+.input-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.input-group textarea:focus {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 8px rgba(255, 183, 3, 0.6);
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group i {
+  color: #ffb703;
+}
+
+.input-group input[type="date"],
+.input-group input[type="number"],
+.input-group input[type="url"] {
+  color: #fff;
+}
+
+.input-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.auth-btn:hover {
+  background: #ffd166;
+  transform: translateY(-3px);
+}
+
+@media (max-width: 480px) {
+  .auth-card textarea {
+    font-size: 0.9rem;
+  }
+}
