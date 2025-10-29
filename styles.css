@@ -470,3 +470,9 @@ body {
   padding: 15px 20px;
   border-radius: 15px;
 }
+
+.btn,
+.auth-btn,
+.auth-btn a {
+  text-decoration: none;
+}
