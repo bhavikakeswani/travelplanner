@@ -66,6 +66,21 @@ body {
   opacity: 0.8;
 }
 
+body.edit-trip-page {
+  height: auto !important;
+  min-height: 100vh;
+  display: block !important;
+  overflow-y: auto;
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
+body.edit-trip-page .auth-container {
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding-top: 20px;
+}
+
 .auth-container {
   display: flex;
   align-items: center;
