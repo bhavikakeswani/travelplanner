@@ -475,6 +475,14 @@ body.trip-page {
   gap: 15px;
 }
 
+body.explore-page {
+  height: auto !important;
+  min-height: 100vh;
+  display: block !important;
+  overflow-y: auto;
+  padding-bottom: 60px;
+}
+
 .trip-card {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
