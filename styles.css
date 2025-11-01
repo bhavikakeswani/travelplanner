@@ -344,8 +344,17 @@ body {
   }
 }
 
+body.trip-page {
+  justify-content: center !important;
+  align-items: flex-start !important;
+  height: auto !important;
+  min-height: 100vh;
+  display: block !important;
+}
+
 .trip-details-container {
-  margin-top: 40px;
+  margin-top: 0;
+  padding-top: 40px; 
   padding-bottom: 60px;
   display: flex;
   justify-content: center;
@@ -364,7 +373,7 @@ body {
   color: #fff;
   width: 95%;
   max-width: 1300px;
-  margin: 40px auto;
+  margin: 0 auto;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
@@ -377,7 +386,9 @@ body {
 .trip-banner img {
   width: 100%;
   height: 250px;
-  object-fit: cover;
+  object-position: center;
+  object-fit: contain;
+  background: rgba(255,255,255,0.1);
   border-radius: 15px;
   margin-bottom: 20px;
 }
