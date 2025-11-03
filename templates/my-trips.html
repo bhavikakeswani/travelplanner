@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Trips - TravelPlanner</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" />
 </head>
 <body>
@@ -12,7 +12,7 @@
     <div class="dashboard-card">
       <div class="dashboard-header">
         <h2>My Trips</h2>
-        <a href="create-trip.html" class="auth-btn" style="width: auto; padding: 10px 25px;">+ Create New Trip</a>
+        <a href="{{url_for('carete_trip')}}" class="auth-btn" style="width: auto; padding: 10px 25px;">+ Create New Trip</a>
       </div>
 
       <div class="trip-cards">
@@ -23,8 +23,8 @@
             <p>📅 15–20 Dec 2025</p>
             <p>🌍 India</p>
             <div class="trip-actions" style="margin-top: 10px;">
-              <a href="trip-details.html" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
-              <a href="edit-trip.html" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
+              <a href="{{url_for('trip-details')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
+              <a href="{{url_for('edit_trip')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
               <button class="auth-btn delete-btn" style="width: auto; padding: 6px 20px;">Delete</button>
             </div>
           </div>
@@ -37,8 +37,8 @@
             <p>📅 5–12 Jan 2026</p>
             <p>🌍 Manali, India</p>
             <div class="trip-actions" style="margin-top: 10px;">
-              <a href="trip-details.html" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
-              <a href="edit-trip.html" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
+              <a href="{{url_for('trip_details')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
+              <a href="{{url_for('edit-trip')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
               <button class="auth-btn delete-btn" style="width: auto; padding: 6px 20px;">Delete</button>
             </div>
           </div>
@@ -51,8 +51,8 @@
             <p>📅 10–17 Mar 2026</p>
             <p>🌍 France</p>
             <div class="trip-actions" style="margin-top: 10px;">
-              <a href="trip-details.html" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
-              <a href="edit-trip.html" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
+              <a href="{{url_for('trip_details')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
+              <a href="{{url_for('edit_trip')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
               <button class="auth-btn delete-btn" style="width: auto; padding: 6px 20px;">Delete</button>
             </div>
           </div>
