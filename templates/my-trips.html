@@ -12,7 +12,7 @@
     <div class="dashboard-card">
       <div class="dashboard-header">
         <h2>My Trips</h2>
-        <a href="{{url_for('carete_trip')}}" class="auth-btn" style="width: auto; padding: 10px 25px;">+ Create New Trip</a>
+        <a href="{{url_for('create_trip')}}" class="auth-btn" style="width: auto; padding: 10px 25px;">+ Create New Trip</a>
       </div>
 
       <div class="trip-cards">
@@ -23,7 +23,7 @@
             <p>📅 15–20 Dec 2025</p>
             <p>🌍 India</p>
             <div class="trip-actions" style="margin-top: 10px;">
-              <a href="{{url_for('trip-details')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
+              <a href="{{url_for('trip_details')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
               <a href="{{url_for('edit_trip')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
               <button class="auth-btn delete-btn" style="width: auto; padding: 6px 20px;">Delete</button>
             </div>
@@ -38,7 +38,7 @@
             <p>🌍 Manali, India</p>
             <div class="trip-actions" style="margin-top: 10px;">
               <a href="{{url_for('trip_details')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">View</a>
-              <a href="{{url_for('edit-trip')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
+              <a href="{{url_for('edit_trip')}}" class="auth-btn" style="width: auto; padding: 6px 20px;">Edit</a>
               <button class="auth-btn delete-btn" style="width: auto; padding: 6px 20px;">Delete</button>
             </div>
           </div>
