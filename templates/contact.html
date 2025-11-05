@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact Us - TravelPlanner</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" />
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
   <div class="auth-container">
     <div class="auth-card">
       <h2>Contact Us</h2>
@@ -45,5 +38,4 @@
       </div>
     </div>
   </div>
-</body>
-</html>
+{% endblock %}
