@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Help & FAQ - TravelPlanner</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
-</head>
+{% extends 'base.html' %}
 
-<body>
+{% block title %}Help - TravelPlanner{% endblock %}
+
+{% block content %}
   <div class="dashboard-container">
     <div class="dashboard-card">
 
@@ -60,5 +55,4 @@
 
     </div>
   </div>
-</body>
-</html>
+{% endblock %}

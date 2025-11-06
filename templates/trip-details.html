@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trip Details - TravelPlanner</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}" />
-</head>
-<body class="trip-page">
+{% extends "base.html" %}
+
+{% block title %}Trip Details - TravelPlanner{% endblock %}
+{% block body_class %}trip-page{% endblock %}
+
+{% block content %}
   <section class="trip-details-container">
     <div class="trip-details-card">
       <header class="trip-details-header">
@@ -48,5 +44,4 @@
       </footer>
     </div>
   </section>
-</body>
-</html>
+{%endblock%}
