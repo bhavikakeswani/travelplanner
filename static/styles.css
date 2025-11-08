@@ -612,3 +612,8 @@ body.explore-page {
 .nav-links a:hover {
   color: #ffb703;
 }
+
+.error-page a {
+  color: #ffb400; 
+  text-decoration: none;
+}
