@@ -75,7 +75,7 @@ body.edit-trip-page {
   padding-bottom: 60px;
 }
 
-body.edit-trip-page .auth-container {
+body.edit-trip-page .auth-container .edit-auth-container {
   align-items: flex-start !important;
   justify-content: center !important;
   padding-top: 20px;
@@ -87,6 +87,15 @@ body.edit-trip-page .auth-container {
   justify-content: center;
   width: 100%;
   margin-top: 120px; 
+  padding-bottom: 40px;
+}
+
+.edit-auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 100px; 
   padding-bottom: 40px;
 }
 
