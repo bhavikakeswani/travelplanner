@@ -171,6 +171,25 @@ body.edit-trip-page .auth-container .edit-auth-container {
   transform: translateY(-2px);
 }
 
+.dashboard-actions {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 40px;
+}
+
+.dashboard-actions .auth-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.dashboard-actions .auth-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 .auth-footer {
   margin-top: 20px;
   font-size: 0.95rem;
@@ -204,6 +223,15 @@ body.edit-trip-page .auth-container .edit-auth-container {
   .auth-card h2 {
     font-size: 1.6rem;
   }
+}
+
+body.dashboard-page {
+  height: auto !important;
+  min-height: 100vh;
+  display: block !important;
+  overflow-y: auto;
+  padding-top: 100px;
+  padding-bottom: 60px;
 }
 
 .dashboard-container {
