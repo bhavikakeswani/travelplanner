@@ -628,3 +628,12 @@ body.explore-page {
   color: #ffb400; 
   text-decoration: none;
 }
+
+body.mytrips-page {
+  height: auto;
+  min-height: 100vh;
+  display: block;
+  overflow-y: auto;
+  padding-top: 100px;
+  padding-bottom: 60px;
+}
