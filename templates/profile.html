@@ -10,16 +10,16 @@
         <div class="profile-img mb-3">
           <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile Picture">
         </div>
-        <h3 class="profile-name">John Doe</h3>
-        <p class="profile-email text-muted">john.doe@example.com</p>
+        <h3 class="profile-name">{{current_user.username|title}}</h3>
+        <p class="profile-email text-muted">{{current_user.email}}</p>
         <button class="auth-btn edit-profile-btn mt-3">Edit Profile</button>
       </div>
 
       <div class="profile-details mt-4">
         <h3>Account Information</h3>
-        <div class="detail-row"><strong>Username:</strong> <span>johndoe</span></div>
-        <div class="detail-row"><strong>Phone:</strong> <span>9876543210</span></div>
-        <div class="detail-row"><strong>Joined On:</strong> <span class="nowrap">March 12, 2024</span></div>
+        <div class="detail-row"><strong>Username:</strong> <span>{{current_user.username|title}}</span></div>
+        <div class="detail-row"><strong>Phone:</strong> <span>{{current_user.phone}}</span></div>
+        <div class="detail-row"><strong>Joined On:</strong> <span class="nowrap">{{ current_user.joined_on.strftime('%B %d, %Y') }}</span></div>
       </div>
     </div>
   </section>
