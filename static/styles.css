@@ -518,7 +518,7 @@ body.profile-page {
   justify-content: center;
   padding-top: 40px;
   padding-bottom: 60px;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 body.profile-page .container {
@@ -673,7 +673,7 @@ body.mytrips-page {
   align-items: center;
   width: 100%;
   min-height: 100vh;
-  padding: 100px 20px 60px;
+  padding: 50px 20px 60px;
 }
 
 .profile-card {
