@@ -16,32 +16,21 @@
         <h3>Your Upcoming Trips</h3>
 
         <div class="trip-cards">
-          <div class="trip-card">
-            <img src="https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=600&q=80" alt="Paris">
-            <div class="trip-info">
-              <h4>Paris Getaway</h4>
-              <p><i class="bi bi-calendar-event"></i> 10–17 Nov 2025</p>
-              <p><i class="bi bi-geo-alt-fill"></i> France</p>
-            </div>
-          </div>
+          {% if user_trips %}
+            {% for trip in user_trips %}
+              <div class="trip-card">
+                <img src="{{ trip.image or 'https://via.placeholder.com/300x200' }}" alt="Trip Image">
 
-          <div class="trip-card">
-            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" alt="Maldives">
-            <div class="trip-info">
-              <h4>Maldives Escape</h4>
-              <p><i class="bi bi-calendar-event"></i> 22–28 Dec 2025</p>
-              <p><i class="bi bi-geo-alt-fill"></i> Maldives</p>
-            </div>
-          </div>
-
-          <div class="trip-card">
-            <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=600&q=80" alt="Tokyo">
-            <div class="trip-info">
-              <h4>Tokyo Adventure</h4>
-              <p><i class="bi bi-calendar-event"></i> 5–12 Jan 2026</p>
-              <p><i class="bi bi-geo-alt-fill"></i> Japan</p>
-            </div>
-          </div>
+                <div class="trip-info">
+                  <h4>{{ trip.destination }}</h4>
+                  <p><i class="bi bi-calendar-event"></i> {{ trip.start_date }} – {{ trip.end_date }}</p>
+                  <p><i class="bi bi-geo-alt-fill"></i> {{ trip.destination }}</p>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p>No trips yet. Start by adding one!</p>
+          {% endif %}
         </div>
       </div>
 
