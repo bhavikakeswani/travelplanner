@@ -7,7 +7,7 @@
     <div class="auth-card">
       <h2><i class="bi bi-plus-circle"></i> Create New Trip</h2>
       
-      <form>
+      <form method="POST" action="{{ url_for('create_trip') }}">
         <div class="input-group">
           <i class="bi bi-geo-alt-fill"></i>
           <input type="text" name="destination" placeholder="Destination (e.g., Paris)" required>
