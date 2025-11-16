@@ -8,49 +8,87 @@
     <div class="auth-card">
       <h2><i class="bi bi-pencil-square"></i> Edit Trip Details</h2>
 
-      <form>
+      <form method="POST" action="">
         <div class="input-group">
           <i class="bi bi-geo-alt-fill"></i>
-          <input type="text" name="destination" placeholder="Destination (e.g., Paris)" value="Paris" required>
+          <input 
+            type="text" 
+            name="destination" 
+            placeholder="Destination (e.g., Paris)" 
+            value="{{ trip.destination }}" 
+            required
+          >
         </div>
 
         <div class="input-group">
           <i class="bi bi-calendar-event"></i>
-          <input type="date" name="start_date" value="2025-11-10" required>
+          <input 
+            type="date" 
+            name="start_date" 
+            value="{{ trip.start_date.strftime('%Y-%m-%d') if trip.start_date else '' }}" 
+            required
+          >
         </div>
 
         <div class="input-group">
           <i class="bi bi-calendar-check"></i>
-          <input type="date" name="end_date" value="2025-11-17" required>
+          <input 
+          type="date" 
+          name="end_date" 
+          value="{{ trip.end_date.strftime('%Y-%m-%d') if trip.end_date else '' }}" 
+          required
+        >
         </div>
 
         <div class="input-group">
           <i class="bi bi-cash-coin"></i>
-          <input type="number" name="budget" placeholder="Budget (USD)" value="2000" min="0" step="100">
+          <input 
+            type="number" 
+            name="budget" 
+            placeholder="Budget (USD)" 
+            value="{{ trip.budget }}" 
+            min="0" 
+            step="100"
+          >
         </div>
 
         <div class="input-group">
           <i class="bi bi-card-text"></i>
-          <textarea name="notes" placeholder="Trip notes or itinerary..." rows="4">Day 1: Arrival and Eiffel Tower visit.
-Day 2: Louvre Museum and Seine River cruise.
-Day 3: Versailles day trip.
-Day 4: Shopping and cafes.
-Day 5: Departure.</textarea>
+          <textarea 
+            name="notes" 
+            placeholder="Trip notes or itinerary..." 
+            rows="4"
+          >{{ trip.notes }}</textarea>
         </div>
 
         <div class="input-group">
           <i class="bi bi-image-fill"></i>
-          <input type="url" name="image" placeholder="Image URL (optional)" value="https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1200&q=80">
+          <input 
+            type="url" 
+            name="image" 
+            placeholder="Image URL (optional)" 
+            value="{{ trip.image }}"
+          >
         </div>
 
         <div class="trip-actions" style="margin-top: 20px;">
-          <button type="submit" class="auth-btn"><i class="bi bi-save"></i> Save Changes</button>
-          <a href="{{url_for('trip_details')}}" class="auth-btn delete-btn"><i class="bi bi-x-circle"></i> Cancel</a>
+          <button type="submit" class="auth-btn">
+            <i class="bi bi-save"></i> Save Changes
+          </button>
+
+          <a 
+            href="{{ url_for('trip_details', id=trip.id) }}" 
+            class="auth-btn delete-btn"
+          >
+            <i class="bi bi-x-circle"></i> Cancel
+          </a>
         </div>
       </form>
 
       <p class="auth-footer">
-        <a href="{{url_for('dashboard')}}"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+        <a href="{{ url_for('dashboard') }}">
+          <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
       </p>
     </div>
   </section>
