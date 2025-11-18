@@ -735,3 +735,20 @@ body.mytrips-page {
     height: 90px;
   }
 }
+
+.flash-messages {
+  margin-bottom: 15px;
+}
+
+.flash {
+  padding: 10px 14px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.flash.warning { background: #ffc107; color: #000; }
+.flash.danger { background: #dc3545; }
+.flash.success { background: #28a745; }
