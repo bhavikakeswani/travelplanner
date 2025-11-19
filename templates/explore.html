@@ -20,38 +20,16 @@
       <div class="trip-summary">
         <h3>Popular Places</h3>
         <div class="trip-cards">
-          
-          <div class="trip-card">
-            <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=600" alt="Paris">
-            <div class="trip-info">
-              <h4>Paris, France</h4>
-              <p>City of lights, art & romance.</p>
-            </div>
-          </div>
 
+          {% for d in destinations %}
           <div class="trip-card">
-            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=600" alt="London">
+            <img src="{{ d.image }}" alt="{{ d.name }}">
             <div class="trip-info">
-              <h4>London, UK</h4>
-              <p>Historic charm with modern vibes.</p>
+              <h4>{{ d.name }}</h4>
+              <p>{{ d.desc }}</p>
             </div>
           </div>
-
-          <div class="trip-card">
-            <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=600" alt="Bali">
-            <div class="trip-info">
-              <h4>Bali, Indonesia</h4>
-              <p>Tropical paradise for peace lovers.</p>
-            </div>
-          </div>
-
-          <div class="trip-card">
-            <img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?q=80&w=600" alt="Dubai">
-            <div class="trip-info">
-              <h4>Dubai, UAE</h4>
-              <p>Luxury, desert & futuristic skyline.</p>
-            </div>
-          </div>
+          {% endfor %}
 
         </div>
       </div>
