@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ city }} Itinerary - TravelPlanner{% endblock %}
+{% block body_class %}itinerary-page{% endblock %}
+
+{% block content %}
+  <div class="dashboard-container">
+    <div class="dashboard-card">
+
+      <div class="dashboard-header">
+        <h2>{{ city }} Itinerary</h2>
+        <a href="{{ url_for('explore') }}" class="logout-btn">Back</a>
+      </div>
+
+      <div class="trip-summary">
+        <h3>Your AI-Generated Travel Plan</h3>
+
+        <div class="itinerary-box">
+          <pre style="white-space:pre-wrap; font-size:16px; line-height:1.6;">
+            {{ itinerary | safe }}
+          </pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
