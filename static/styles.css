@@ -752,3 +752,11 @@ body.mytrips-page {
 .flash.warning { background: #ffc107; color: #000; }
 .flash.danger { background: #dc3545; }
 .flash.success { background: #28a745; }
+
+.itinerary-box {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
