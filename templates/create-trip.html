@@ -3,11 +3,12 @@
 {% block title %}Create Trip - TravelPlanner{% endblock %}
 
 {% block content %}
-  <section class="auth-container">
-    <div class="auth-card">
+  <section class="auth-container create-trip-page">
+    <div class="auth-card create-trip-card">
       <h2><i class="bi bi-plus-circle"></i> Create New Trip</h2>
       
-      <form method="POST" action="{{ url_for('create_trip') }}">
+      <form method="POST" action="{{ url_for('create_trip') }}" class="create-trip-container">
+        
         <div class="input-group">
           <i class="bi bi-geo-alt-fill"></i>
           <input type="text" name="destination" placeholder="Destination (e.g., Paris)" required>

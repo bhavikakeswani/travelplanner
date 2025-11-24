@@ -760,3 +760,22 @@ body.mytrips-page {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   margin-top: 20px;
 }
+
+.create-trip-card {
+  width: 550px;
+  max-width: 95%;
+  margin: 0 auto;
+}
+
+.create-trip-container {
+  width: 100%;
+}
+
+.create-trip-container .input-group {
+  width: 100%;
+}
+
+.create-trip-container input,
+.create-trip-container textarea {
+  width: 100%;
+}
