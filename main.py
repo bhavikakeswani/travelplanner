@@ -6,8 +6,10 @@ from flask_login import UserMixin, login_user, LoginManager, current_user, logou
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import google.generativeai as genai
+from dotenv import load_dotenv
 import os
 
+load_dotenv()
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
