@@ -149,7 +149,7 @@ def explore():
 def help():
     return render_template('help.html')
 
-@app.route('/itinerary/<city>')
+@app.route('/itinerary/<path:city>')
 @login_required
 def itinerary(city):
     try:
