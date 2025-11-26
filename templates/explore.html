@@ -22,13 +22,17 @@
         <div class="trip-cards">
 
           {% for d in destinations %}
-          <div class="trip-card">
-            <img src="{{ d.image }}" alt="{{ d.name }}">
-            <div class="trip-info">
-              <h4>{{ d.name }}</h4>
-              <p>{{ d.desc }}</p>
+          <a href="{{ url_for('itinerary', city=d.name) }}" class="trip-card-link">
+            <div class="trip-card">
+              <img src="{{ d.image }}" 
+              alt="{{ d.name }}" 
+              onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e';">
+              <div class="trip-info">
+                <h4>{{ d.name }}</h4>
+                <p>{{ d.desc }}</p>
+              </div>
             </div>
-          </div>
+          </a>
           {% endfor %}
 
         </div>
