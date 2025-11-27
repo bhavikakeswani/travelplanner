@@ -5,19 +5,21 @@ from sqlalchemy import String, Integer, Float, Text, Date, DateTime, ForeignKey
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-import google.generativeai as genai
 from dotenv import load_dotenv
+from groq import Groq
+import json
 import os
 
 load_dotenv()
+
 app = Flask(__name__)
-
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-genai.configure(api_key=os.environ.get("GENAI_API_KEY"))
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///travelplanner.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
+
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -73,96 +75,64 @@ def create_trip():
         return redirect(url_for('my_trips'))
     return render_template('create-trip.html')
 
-@app.route('/edit_trip/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_trip(id):
-    trip = db.session.get(Trip, id)
-    if not trip or trip.user_id != current_user.id:
-        return "Unauthorized", 403
-    if request.method == 'POST':
-        trip.destination = request.form.get('destination')
-        trip.start_date = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
-        trip.end_date = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date()
-        trip.budget = request.form.get('budget')
-        trip.notes = request.form.get('notes')
-        trip.image = request.form.get('image')
-        db.session.commit()
-        return redirect(url_for('my_trips'))
-    return render_template('edit-trip.html', trip=trip)
-
 @app.route('/my_trips')
 @login_required
 def my_trips():
     trips = db.session.execute(db.select(Trip).where(Trip.user_id == current_user.id)).scalars().all()
     return render_template('my-trips.html', trips=trips)
 
-@app.route('/trip_details/<int:id>')
-@login_required
-def trip_details(id):
-    trip = db.session.get(Trip, id)
-    if not trip or trip.user_id != current_user.id:
-        return "Unauthorized", 403
-    return render_template('trip-details.html', trip=trip)
-
-@app.route('/delete_trip/<int:id>')
-@login_required
-def delete_trip(id):
-    trip = db.session.get(Trip, id)
-    if not trip or trip.user_id != current_user.id:
-        return "Unauthorized", 403
-    db.session.delete(trip)
-    db.session.commit()
-    return redirect(url_for('my_trips'))
-
 @app.route('/explore')
 @login_required
 def explore():
     try:
-        model = genai.GenerativeModel("gemini-2.5-flash")
         prompt = """
-        Return ONLY a valid JSON array of exactly 6 travel destinations.
-        No explanation, no markdown, no formatting.
+        Return ONLY valid JSON. No explanation.
+        Generate exactly 6 travel destinations.
         Format:
         [
-          {
-            "name": "",
-            "desc": "",
-            "image": ""
-          }
+          { "name": "", "desc": "", "image": "" }
         ]
-        Use royalty-free Unsplash images only.
+        Use real Unsplash image URLs only.
         """
-        response = model.generate_content(prompt)
-        raw = response.text.strip()
-        if raw.startswith("```"):
-            raw = raw.split("```")[1].strip()
-        if raw.lower().startswith("json"):
-            raw = raw[4:].strip()
-        import json
+
+        chat = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        raw = chat.choices[0].message.content.strip()
         destinations = json.loads(raw)
+
         return render_template("explore.html", destinations=destinations)
+
     except Exception as e:
         return f"Error generating destinations: {e}"
-
-@app.route('/help')
-@login_required
-def help():
-    return render_template('help.html')
 
 @app.route('/itinerary/<path:city>')
 @login_required
 def itinerary(city):
     try:
-        model = genai.GenerativeModel("gemini-2.5-pro")
         prompt = f"""
         Create a detailed 2-day travel itinerary for {city}.
-        Include timings, must-visit places, food suggestions,
-        transportation tips, and best photo spots.
-        Format it clean and readable.
+        Include:
+        - Timings
+        - Must-visit places
+        - Food recommendations
+        - Transport tips
+        - Best photo spots
+        Use clean bullet formatting.
         """
-        response = model.generate_content(prompt)
-        itinerary_text = response.text
-        return render_template('itinerary.html', city=city, itinerary=itinerary_text)
+
+        chat = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+
+        itinerary_text = chat.choices[0].message.content
+
+        return render_template("itinerary.html", city=city, itinerary=itinerary_text)
+
     except Exception as e:
         return f"Error generating itinerary: {e}"
 
@@ -170,6 +140,16 @@ def itinerary(city):
 @login_required
 def profile():
     return render_template('profile.html', current_user=current_user)
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+
+@app.route('/help')
+@login_required
+def help():
+    return render_template('help.html')
 
 @app.route('/about')
 @login_required
@@ -181,15 +161,6 @@ def about():
 def contact():
     return render_template('contact.html')
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    return render_template('dashboard.html')
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -197,19 +168,27 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
+
         existing_user = db.session.execute(db.select(User).where(User.email == email)).scalar_one_or_none()
+
         if existing_user:
-            flash("An account with this email already exists.", "warning")
+            flash("Account already exists.", "warning")
             return redirect(url_for("login"))
+
         if password == confirm_password:
-            user = User(username=name, email=email, password_hash=generate_password_hash(password, 'pbkdf2:sha256', 8))
+            user = User(
+                username=name,
+                email=email,
+                password_hash=generate_password_hash(password, 'pbkdf2:sha256', 8)
+            )
             db.session.add(user)
             db.session.commit()
             login_user(user)
             return redirect(url_for("dashboard"))
-        else:
-            flash("Passwords do not match.", "danger")
-            return redirect(url_for("register"))
+
+        flash("Passwords do not match.", "danger")
+        return redirect(url_for("register"))
+
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -217,13 +196,16 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
+
         user = db.session.execute(db.select(User).where(User.email == email)).scalar_one_or_none()
+
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
             return redirect(url_for("dashboard"))
-        else:
-            flash("Invalid email or password.", "danger")
-            return redirect(url_for('login'))
+
+        flash("Invalid email or password.", "danger")
+        return redirect(url_for('login'))
+
     return render_template('login.html')
 
 @app.route('/logout')
@@ -231,6 +213,10 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 if __name__ == "__main__":
     with app.app_context():
