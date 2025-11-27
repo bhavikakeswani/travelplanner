@@ -24,9 +24,8 @@
           {% for d in destinations %}
           <a href="{{ url_for('itinerary', city=d.name) }}" class="trip-card-link">
             <div class="trip-card">
-              <img src="{{ d.image }}" 
-              alt="{{ d.name }}" 
-              onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e';">
+              <img src="https://picsum.photos/seed/{{ d.name | urlencode }}/600/400"
+              alt="{{ d.name }}">
               <div class="trip-info">
                 <h4>{{ d.name }}</h4>
                 <p>{{ d.desc }}</p>
