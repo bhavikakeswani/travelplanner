@@ -16,12 +16,24 @@
         <h3>Your AI-Generated Travel Plan</h3>
 
         <div class="itinerary-box">
-          <pre style="white-space:pre-wrap; font-size:16px; line-height:1.6;">
-            {{ itinerary | safe }}
-          </pre>
+          <div class="itinerary-text">
+            {{ itinerary
+              | replace("**", "")
+              | replace("* ", "")
+              | replace("*", "")
+              | replace("+", "→")
+              | safe }}
+          </div>
         </div>
       </div>
-
+      <div class="itinerary-actions">
+        <form method="POST" action="{{ url_for('save_itinerary') }}">
+          <input type="hidden" name="image" value="{{ image }}">
+          <input type="hidden" name="destination" value="{{ city }}">
+          <input type="hidden" name="notes" value="{{ itinerary | safe }}">
+          <button type="submit" class="auth-btn">Add to My Trips</button>
+        </form>
+      </div>
     </div>
   </div>
 {% endblock %}
