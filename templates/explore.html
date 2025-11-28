@@ -22,10 +22,9 @@
         <div class="trip-cards">
 
           {% for d in destinations %}
-          <a href="{{ url_for('itinerary', city=d.name) }}" class="trip-card-link">
+          <a href="{{ url_for('itinerary', city=d.name, image=d.image) }}" class="trip-card-link">
             <div class="trip-card">
-              <img src="https://picsum.photos/seed/{{ d.name | urlencode }}/600/400"
-              alt="{{ d.name }}">
+              <img src="{{ d.image }}" alt="{{ d.name }}">
               <div class="trip-info">
                 <h4>{{ d.name }}</h4>
                 <p>{{ d.desc }}</p>
