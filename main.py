@@ -81,6 +81,17 @@ def my_trips():
     trips = db.session.execute(db.select(Trip).where(Trip.user_id == current_user.id)).scalars().all()
     return render_template('my-trips.html', trips=trips)
 
+@app.route('/trip/<int:id>')
+@login_required
+def trip_details(id):
+    trip = db.session.get(Trip, id)
+
+    if trip is None or trip.user_id != current_user.id:
+        flash("Trip not found or access denied.", "danger")
+        return redirect(url_for('my_trips'))
+
+    return render_template('trip-details.html', trip=trip)
+
 @app.route('/explore')
 @login_required
 def explore():
@@ -112,6 +123,7 @@ def explore():
 @login_required
 def itinerary(city):
     try:
+        image = request.args.get('image')
         prompt = f"""
         Create a detailed 2-day travel itinerary for {city}.
         Include:
@@ -129,12 +141,34 @@ def itinerary(city):
         )
 
 
-        itinerary_text = chat.choices[0].message.content
+        itinerary_text = chat.choices[0].message.content.strip()
 
-        return render_template("itinerary.html", city=city, itinerary=itinerary_text)
+        return render_template("itinerary.html", city=city, itinerary=itinerary_text,image=image)
 
     except Exception as e:
         return f"Error generating itinerary: {e}"
+    
+@app.route('/save_itinerary', methods=['POST'])
+@login_required
+def save_itinerary():
+    destination = request.form.get('destination')
+    notes = request.form.get('notes')
+
+    trip = Trip(
+        user_id=current_user.id,
+        destination=destination,
+        start_date=datetime.utcnow().date(),
+        end_date=datetime.utcnow().date(),
+        budget=0,
+        notes=notes,
+        image=request.form.get('image')
+    )
+
+    db.session.add(trip)
+    db.session.commit()
+
+    flash("Trip added to your upcoming trips!", "success")
+    return redirect(url_for('my_trips'))
 
 @app.route('/profile')
 @login_required
