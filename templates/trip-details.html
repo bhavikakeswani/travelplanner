@@ -4,44 +4,53 @@
 {% block body_class %}trip-page{% endblock %}
 
 {% block content %}
-  <section class="trip-details-container">
-    <div class="trip-details-card">
-      <header class="trip-details-header">
-        <h2><i class="bi bi-geo-alt-fill"></i> Paris Getaway</h2>
-        <a href="{{url_for('dashboard')}}" class="logout-btn"><i class="bi bi-arrow-left"></i> Back</a>
-      </header>
+<section class="trip-details-container">
+  <div class="trip-details-card">
 
-      <div class="trip-banner">
-        <img src="https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1200&q=80" alt="Paris">
-      </div>
+    <header class="trip-details-header">
+      <h2><i class="bi bi-geo-alt-fill"></i> {{ trip.destination }}</h2>
+      <a href="{{ url_for('my_trips') }}" class="logout-btn">
+        <i class="bi bi-arrow-left"></i> Back
+      </a>
+    </header>
 
-      <div class="trip-info-details">
-        <h3>Trip Overview</h3>
-        <p><i class="bi bi-calendar-event"></i> <strong>Start Date:</strong> 10 Nov 2025</p>
-        <p><i class="bi bi-calendar-check"></i> <strong>End Date:</strong> 17 Nov 2025</p>
-        <p><i class="bi bi-cash-coin"></i> <strong>Budget:</strong> $2000</p>
-        <p><i class="bi bi-geo-alt-fill"></i> <strong>Destination:</strong> France</p>
-      </div>
-
-      <div class="trip-notes">
-        <h3><i class="bi bi-card-text"></i> Itinerary & Notes</h3>
-        <p>
-          Day 1: Arrival and Eiffel Tower visit.<br>
-          Day 2: Louvre Museum tour and Seine river cruise.<br>
-          Day 3: Day trip to Versailles.<br>
-          Day 4: Shopping and local cafes exploration.<br>
-          Day 5: Departure.
-        </p>
-      </div>
-
-      <div class="trip-actions">
-        <a href="{{url_for('edit_trip)}}" class="auth-btn"><i class="bi bi-pencil-square"></i> Edit Trip</a>
-        <button class="auth-btn delete-btn"><i class="bi bi-trash-fill"></i> Delete Trip</button>
-      </div>
-
-      <footer class="dashboard-footer">
-        &copy; 2025 TravelPlanner. Adventure awaits ✈️
-      </footer>
+    <div class="trip-banner">
+      {% if trip.image %}
+        <img src="{{ trip.image }}" alt="{{ trip.destination }}">
+      {% else %}
+        <img src="https://picsum.photos/seed/{{ trip.id }}/1200/400" alt="Trip Image">
+      {% endif %}
     </div>
-  </section>
-{%endblock%}
+
+    <div class="trip-info-details">
+      <h3>Trip Overview</h3>
+      <p><i class="bi bi-calendar-event"></i> <strong>Start Date:</strong> {{ trip.start_date }}</p>
+      <p><i class="bi bi-calendar-check"></i> <strong>End Date:</strong> {{ trip.end_date }}</p>
+      <p><i class="bi bi-cash-coin"></i> <strong>Budget:</strong> ₹{{ trip.budget }}</p>
+      <p><i class="bi bi-geo-alt-fill"></i> <strong>Destination:</strong> {{ trip.destination }}</p>
+    </div>
+
+    <div class="trip-notes">
+      <h3><i class="bi bi-card-text"></i> Itinerary & Notes</h3>
+      <p>{{ trip.notes | safe }}</p>
+    </div>
+
+    <div class="trip-actions">
+      <button class="auth-btn disabled">
+        <i class="bi bi-pencil-square"></i> Edit Trip
+      </button>
+
+      <form method="POST" action="{{ url_for('delete_trip', id=trip.id) }}">
+        <button type="submit" class="auth-btn delete-btn">
+          <i class="bi bi-trash-fill"></i> Delete Trip
+        </button>
+      </form>
+    </div>
+
+    <footer class="dashboard-footer">
+      &copy; 2025 TravelPlanner. Adventure awaits ✈️
+    </footer>
+
+  </div>
+</section>
+{% endblock %}
