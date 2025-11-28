@@ -779,3 +779,33 @@ body.mytrips-page {
 .create-trip-container textarea {
   width: 100%;
 }
+
+body.itinerary-page {
+  height: auto !important;
+  min-height: 100vh;
+  display: block !important;
+  overflow-y: auto;
+  padding-top: 100px;
+  padding-bottom: 60px;
+}
+
+.itinerary-box {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  margin-top: 20px;
+}
+
+.itinerary-text {
+  white-space: pre-wrap;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #fff;
+}
+
+.itinerary-actions {
+  margin-top: 25px;
+  text-align: center;
+}
