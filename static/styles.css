@@ -833,3 +833,30 @@ body.itinerary-page {
   margin: 18px 0 10px;
   color: #ffd369;
 }
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  margin: 20px 0 30px;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.12);
+  padding: 18px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.stat-card h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #ffd369;
+}
+
+.stat-card p {
+  font-size: 14px;
+  color: #ddd;
+}
