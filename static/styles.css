@@ -799,7 +799,6 @@ body.itinerary-page {
 }
 
 .itinerary-text {
-  white-space: pre-wrap;
   font-size: 16px;
   line-height: 1.7;
   color: #fff;
@@ -808,4 +807,29 @@ body.itinerary-page {
 .itinerary-actions {
   margin-top: 25px;
   text-align: center;
+}
+
+.itinerary-text p {
+  margin-bottom: 10px;
+}
+
+.itinerary-text ul {
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.itinerary-text li {
+  margin-bottom: 6px;
+}
+
+.error-text {
+  color: #d9534f;
+  font-weight: 600;
+}
+
+.day-heading {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 18px 0 10px;
+  color: #ffd369;
 }

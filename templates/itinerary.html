@@ -17,12 +17,29 @@
 
         <div class="itinerary-box">
           <div class="itinerary-text">
-            {{ itinerary
-              | replace("**", "")
-              | replace("* ", "")
-              | replace("*", "")
-              | replace("+", "→")
-              | safe }}
+            {% if itinerary %}
+              {% set clean_itinerary = itinerary
+                | replace("**", "")
+                | replace("•", "-")
+                | replace("* ", "- ")
+              %}
+
+              {% for line in clean_itinerary.split('\n') %}
+                {% if line.strip().startswith('-') %}
+                  <ul>
+                    <li>{{ line.replace('-', '').strip() }}</li>
+                  </ul>
+                {% elif line.strip() %}
+                  {% if "Day" in line %}
+                    <h4 class="day-heading">{{ line }}</h4>
+                  {% else %}
+                    <p>{{ line }}</p>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <p class="error-text">Itinerary could not be generated. Please try again.</p>
+            {% endif %}
           </div>
         </div>
       </div>
