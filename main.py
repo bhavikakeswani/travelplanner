@@ -178,7 +178,11 @@ def profile():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    trips = db.session.execute(
+        db.select(Trip).where(Trip.user_id == current_user.id)
+    ).scalars().all()
+
+    return render_template('dashboard.html', user_trips=trips)
 
 @app.route('/help')
 @login_required
