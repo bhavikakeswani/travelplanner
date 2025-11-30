@@ -860,3 +860,7 @@ body.itinerary-page {
   font-size: 14px;
   color: #ddd;
 }
+
+.trip-card {
+  cursor: pointer;
+}
