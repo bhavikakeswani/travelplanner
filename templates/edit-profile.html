@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile - TravelPlanner{% endblock %}
+{% block body_class %}edit-profile-page{% endblock %}
+
+{% block content %}
+<section class="edit-profile-section">
+  <div class="edit-profile-card">
+    <h2>Edit Profile</h2>
+
+    <form method="POST" class="edit-profile-form">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" value="{{ current_user.username|title }}" required>
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" name="phone" value="{{ current_user.phone or '' }}">
+      </div>
+
+      <button type="submit" class="auth-btn save-btn">Save Changes</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

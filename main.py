@@ -175,6 +175,19 @@ def save_itinerary():
 def profile():
     return render_template('profile.html', current_user=current_user)
 
+@app.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    if request.method == 'POST':
+        current_user.username = request.form['username']
+        current_user.phone = request.form['phone']
+        db.session.commit()
+
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for('profile'))
+
+    return render_template('edit-profile.html')
+
 @app.route('/dashboard')
 @login_required
 def dashboard():

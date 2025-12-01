@@ -864,3 +864,54 @@ body.itinerary-page {
 .trip-card {
   cursor: pointer;
 }
+
+.edit-profile-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.edit-profile-card {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  padding: 40px 35px;
+  border-radius: 16px;
+  width: 360px;
+  color: #fff;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+.edit-profile-card h2 {
+  margin-bottom: 25px;
+  font-size: 26px;
+}
+
+.edit-profile-form .form-group {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.edit-profile-form label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #ddd;
+}
+
+.edit-profile-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+}
+
+.save-btn {
+  width: 100%;
+  margin-top: 10px;
+}
