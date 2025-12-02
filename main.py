@@ -97,13 +97,12 @@ def trip_details(id):
 def explore():
     try:
         prompt = """
-        Return ONLY valid JSON. No explanation.
+        Return ONLY valid JSON array. No explanation.
         Generate exactly 6 travel destinations.
         Format:
         [
-          { "name": "", "desc": "", "image": "" }
+          { "name": "City Name", "desc": "Short description" }
         ]
-        Use real Unsplash image URLs only.
         """
 
         chat = client.chat.completions.create(
@@ -112,12 +111,26 @@ def explore():
         )
 
         raw = chat.choices[0].message.content.strip()
+        raw = raw.replace("```json", "").replace("```", "").strip()
+
         destinations = json.loads(raw)
+
+        for d in destinations:
+            d["image"] = f"https://picsum.photos/seed/{d['name']}/600/400"
 
         return render_template("explore.html", destinations=destinations)
 
-    except Exception as e:
-        return f"Error generating destinations: {e}"
+    except Exception:
+        destinations = [
+            {"name": "Paris", "desc": "City of lights & romance", "image": "https://picsum.photos/seed/paris/600/400"},
+            {"name": "Tokyo", "desc": "Technology & culture hub", "image": "https://picsum.photos/seed/tokyo/600/400"},
+            {"name": "Goa", "desc": "Beaches & nightlife", "image": "https://picsum.photos/seed/goa/600/400"},
+            {"name": "Dubai", "desc": "Luxury & skyscrapers", "image": "https://picsum.photos/seed/dubai/600/400"},
+            {"name": "Rome", "desc": "Ancient history & food", "image": "https://picsum.photos/seed/rome/600/400"},
+            {"name": "Bali", "desc": "Nature & temples", "image": "https://picsum.photos/seed/bali/600/400"},
+        ]
+
+        return render_template("explore.html", destinations=destinations)
 
 @app.route('/itinerary/<path:city>')
 @login_required
