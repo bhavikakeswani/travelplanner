@@ -42,7 +42,21 @@
                   <h4>{{ trip.destination }}</h4>
                   <p><i class="bi bi-calendar-event"></i> {{ trip.start_date }} – {{ trip.end_date }}</p>
                   <p><i class="bi bi-geo-alt-fill"></i> {{ trip.destination }}</p>
-                </div>
+
+                  <div class="trip-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+                    <a href="{{ url_for('edit_trip', id=trip.id) }}"
+                      class="auth-btn"
+                      style="width: auto; padding: 6px 20px;">
+                      Edit
+                    </a>
+
+                    <a href="{{ url_for('delete_trip', id=trip.id) }}"
+                      class="auth-btn delete-btn"
+                      style="width: auto; padding: 6px 20px;">
+                      Delete
+                    </a>
+                  </div>
+                            </div>
               </div>
             {% endfor %}
           {% else %}
