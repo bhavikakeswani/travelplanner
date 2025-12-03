@@ -68,7 +68,7 @@ def create_trip():
             end_date=datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date(),
             budget=request.form.get('budget'),
             notes=request.form.get('notes'),
-            image=request.form.get('image')
+            image=f"https://picsum.photos/seed/{request.form.get('destination')}/600/400"
         )
         db.session.add(trip)
         db.session.commit()
@@ -174,7 +174,7 @@ def save_itinerary():
         end_date=datetime.utcnow().date(),
         budget=0,
         notes=notes,
-        image=request.form.get('image')
+        image=f"https://picsum.photos/seed/{destination}/600/400"
     )
 
     db.session.add(trip)

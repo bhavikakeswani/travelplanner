@@ -36,7 +36,7 @@
           {% if user_trips %}
             {% for trip in user_trips %}
               <div class="trip-card">
-                <img src="{{ trip.image or 'https://via.placeholder.com/300x200' }}" alt="Trip Image">
+                <img src="{{ trip.image }}" alt="Trip Image">
 
                 <div class="trip-info">
                   <h4>{{ trip.destination }}</h4>
