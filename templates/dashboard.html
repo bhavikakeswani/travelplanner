@@ -35,30 +35,39 @@
         <div class="trip-cards">
           {% if user_trips %}
             {% for trip in user_trips %}
-              <div class="trip-card">
-                <img src="{{ trip.image }}" alt="Trip Image">
+              <a href="{{ url_for('trip_details', id=trip.id) }}" class="trip-card-link">
 
-                <div class="trip-info">
-                  <h4>{{ trip.destination }}</h4>
-                  <p><i class="bi bi-calendar-event"></i> {{ trip.start_date }} – {{ trip.end_date }}</p>
-                  <p><i class="bi bi-geo-alt-fill"></i> {{ trip.destination }}</p>
+                <div class="trip-card">
+                  <img src="{{ trip.image }}" alt="Trip Image">
 
-                  <div class="trip-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-                    <a href="{{ url_for('edit_trip', id=trip.id) }}"
-                      class="auth-btn"
-                      style="width: auto; padding: 6px 20px;">
-                      Edit
-                    </a>
+                  <div class="trip-info">
+                    <h4>{{ trip.destination }}</h4>
+                    <p><i class="bi bi-calendar-event"></i> {{ trip.start_date }} – {{ trip.end_date }}</p>
+                    <p><i class="bi bi-geo-alt-fill"></i> {{ trip.destination }}</p>
 
-                    <a href="{{ url_for('delete_trip', id=trip.id) }}"
-                      class="auth-btn delete-btn"
-                      style="width: auto; padding: 6px 20px;">
-                      Delete
-                    </a>
+                    <div class="trip-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+
+                      <a href="{{ url_for('edit_trip', id=trip.id) }}"
+                        class="auth-btn"
+                        style="width: auto; padding: 6px 20px;"
+                        onclick="event.stopPropagation()">
+                        Edit
+                      </a>
+
+                      <a href="{{ url_for('delete_trip', id=trip.id) }}"
+                        class="auth-btn delete-btn"
+                        style="width: auto; padding: 6px 20px;"
+                        onclick="event.stopPropagation()">
+                        Delete
+                      </a>
+
+                    </div>
                   </div>
-                            </div>
-              </div>
-            {% endfor %}
+                </div>
+
+              </a>
+
+              {% endfor %}
           {% else %}
             <p>No trips yet. Start by adding one!</p>
           {% endif %}
