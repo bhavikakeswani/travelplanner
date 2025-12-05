@@ -915,3 +915,23 @@ body.itinerary-page {
   width: 100%;
   margin-top: 10px;
 }
+
+.trip-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+.trip-card-link {
+  display: contents;
+}
+
+.trip-card {
+  cursor: pointer;
+}
+
+.trip-card-link,
+.trip-card-link * {
+  color: inherit !important;
+  text-decoration: none !important;
+}
