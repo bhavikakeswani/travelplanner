@@ -13,18 +13,42 @@
       </div>
 
       <div class="trip-summary">
-        <h3>Your AI-Generated Travel Plan</h3>
+        <h3>Your AI Travel Plan (Budget-Aware)</h3>
 
-        <div class="itinerary-box">
-          <div class="itinerary-text">
-            {% if itinerary %}
-              {% set clean_itinerary = itinerary
-                | replace("**", "")
-                | replace("•", "-")
-                | replace("* ", "- ")
+        {% if not itinerary %}
+          <div class="itinerary-box">
+            <form method="POST" class="itinerary-form" style="display: grid; gap: 12px;">
+
+              <label>
+                Start Date
+                <input type="date" name="start_date" required>
+              </label>
+
+              <label>
+                End Date
+                <input type="date" name="end_date" required>
+              </label>
+
+              <label>
+                Budget (₹)
+                <input type="number" name="budget" min="0" step="0.01" required placeholder="e.g. 25000">
+              </label>
+
+              <button type="submit" class="auth-btn">Generate Itinerary</button>
+            </form>
+          </div>
+
+        {% else %}
+          <div class="itinerary-box">
+            <div class="itinerary-text">
+              {% set cleaned = itinerary
+                 | replace("**", "")
+                 | replace("•", "-")
+                 | replace("* ", "- ")
+                 | replace("*", "")
               %}
 
-              {% for line in clean_itinerary.split('\n') %}
+              {% for line in cleaned.split('\n') %}
                 {% if line.strip().startswith('-') %}
                   <ul>
                     <li>{{ line.replace('-', '').strip() }}</li>
@@ -37,20 +61,23 @@
                   {% endif %}
                 {% endif %}
               {% endfor %}
-            {% else %}
-              <p class="error-text">Itinerary could not be generated. Please try again.</p>
-            {% endif %}
+            </div>
           </div>
-        </div>
+
+          <div class="itinerary-actions">
+            <form method="POST" action="{{ url_for('save_itinerary') }}" class="itinerary-form" style="display: grid; gap: 10px;">
+              <input type="hidden" name="destination" value="{{ city }}">
+              <input type="hidden" name="notes" value="{{ itinerary }}">
+              <input type="hidden" name="start_date" value="{{ start_date }}">
+              <input type="hidden" name="end_date" value="{{ end_date }}">
+              <input type="hidden" name="budget" value="{{ budget }}">
+
+              <button type="submit" class="auth-btn">Add to My Trips</button>
+            </form>
+          </div>
+        {% endif %}
       </div>
-      <div class="itinerary-actions">
-        <form method="POST" action="{{ url_for('save_itinerary') }}">
-          <input type="hidden" name="image" value="{{ image }}">
-          <input type="hidden" name="destination" value="{{ city }}">
-          <input type="hidden" name="notes" value="{{ itinerary | safe }}">
-          <button type="submit" class="auth-btn">Add to My Trips</button>
-        </form>
-      </div>
+
     </div>
   </div>
 {% endblock %}
