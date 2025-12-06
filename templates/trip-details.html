@@ -32,7 +32,40 @@
 
     <div class="trip-notes">
       <h3><i class="bi bi-card-text"></i> Itinerary & Notes</h3>
-      <p>{{ trip.notes | safe }}</p>
+
+      <div class="itinerary-box">
+        <div class="itinerary-text">
+
+          {% if trip.notes %}
+            {% set cleaned = trip.notes
+              | replace("**", "")
+              | replace("•", "-")
+              | replace("* ", "- ")
+              | replace("*", "")
+            %}
+
+            {% for line in cleaned.split('\n') %}
+              {% if line.strip().startswith('-') %}
+                <ul>
+                  <li>{{ line.replace('-', '').strip() }}</li>
+                </ul>
+
+              {% elif line.strip() %}
+                {% if "Day" in line %}
+                  <h4 class="day-heading" style="margin-top: 15px;">{{ line }}</h4>
+                {% else %}
+                  <p>{{ line }}</p>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+          {% else %}
+            <p>No itinerary added.</p>
+          {% endif %}
+
+        </div>
+      </div>
+
     </div>
 
     <div class="trip-actions">
