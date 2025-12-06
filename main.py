@@ -132,47 +132,87 @@ def explore():
 
         return render_template("explore.html", destinations=destinations)
 
-@app.route('/itinerary/<path:city>')
+@app.route('/itinerary/<path:city>', methods=['GET', 'POST'])
 @login_required
 def itinerary(city):
-    try:
-        image = request.args.get('image')
+    image = request.args.get('image')
+
+    if request.method == 'POST':
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        budget = request.form.get('budget')
+
         prompt = f"""
-        Create a detailed 2-day travel itinerary for {city}.
-        Include:
-        - Timings
-        - Must-visit places
-        - Food recommendations
-        - Transport tips
-        - Best photo spots
-        Use clean bullet formatting.
-        """
+Create a detailed travel itinerary for {city} with the following constraints:
+
+- Start date: {start_date}
+- End date: {end_date}
+- Total budget (₹): {budget}
+
+Use this format for prices:
+- Always show currency symbol ₹
+- For ranges, use "₹min - ₹max" with spaces around the dash
+- For single prices, use "₹amount"
+- Use commas as thousand separators (e.g., ₹12,000)
+- Avoid concatenating numbers without spaces or dashes
+
+Output exactly like this (clean bullet formatting):
+Day 1: <title>
+Morning (hh:mm - hh:mm):
+- ...
+Afternoon (hh:mm - hh:mm):
+- ...
+Evening (hh:mm - hh:mm):
+- ...
+
+Include:
+- must-visit places
+- food recommendations (aligned with budget)
+- transport tips (aligned with budget)
+- best photo spots
+"""
 
         chat = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}]
         )
-
-
         itinerary_text = chat.choices[0].message.content.strip()
 
-        return render_template("itinerary.html", city=city, itinerary=itinerary_text,image=image)
+        return render_template(
+            "itinerary.html",
+            city=city,
+            image=image,
+            itinerary=itinerary_text,
+            start_date=start_date,
+            end_date=end_date,
+            budget=budget
+        )
+    return render_template(
+        "itinerary.html",
+        city=city,
+        image=image,
+        itinerary=None,
+        start_date=None,
+        end_date=None,
+        budget=None
+    )
 
-    except Exception as e:
-        return f"Error generating itinerary: {e}"
-    
+
 @app.route('/save_itinerary', methods=['POST'])
 @login_required
 def save_itinerary():
-    destination = request.form.get('destination')
-    notes = request.form.get('notes')
+    destination  = request.form.get('destination')
+    notes        = request.form.get('notes')
+    start_date   = request.form.get('start_date')
+    end_date     = request.form.get('end_date')
+    budget       = request.form.get('budget')
 
     trip = Trip(
         user_id=current_user.id,
         destination=destination,
-        start_date=datetime.utcnow().date(),
-        end_date=datetime.utcnow().date(),
-        budget=0,
+        start_date=datetime.strptime(start_date, '%Y-%m-%d').date() if start_date else None,
+        end_date=datetime.strptime(end_date, '%Y-%m-%d').date() if end_date else None,
+        budget=float(budget) if budget else None,
         notes=notes,
         image=f"https://picsum.photos/seed/{destination}/600/400"
     )
