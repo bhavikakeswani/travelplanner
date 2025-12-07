@@ -24,6 +24,51 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+CITY_TO_COUNTRY = {
+    "paris": "france",
+    "london": "uk",
+    "dubai": "uae",
+    "rome": "italy",
+    "tokyo": "japan",
+    "new york": "usa",
+    "goa": "india",
+    "delhi": "india",
+    "mumbai": "india",
+    "bali": "indonesia"
+}
+
+COUNTRY_CURRENCY = {
+    "india": {"symbol": "₹", "inr_per_unit": 1.0},
+    "france": {"symbol": "€", "inr_per_unit": 90.0},
+    "uk": {"symbol": "£", "inr_per_unit": 105.0},
+    "usa": {"symbol": "$", "inr_per_unit": 83.0},
+    "uae": {"symbol": "AED", "inr_per_unit": 23.0},
+    "japan": {"symbol": "¥", "inr_per_unit": 0.58},
+    "italy": {"symbol": "€", "inr_per_unit": 90.0},
+    "indonesia": {"symbol": "Rp", "inr_per_unit": 0.0055}
+}
+
+COUNTRY_COST_BASIS = {
+    "india": {"hotel": 2500, "meal": 700, "transport": 300, "activity": 500},
+    "france": {"hotel": 100, "meal": 18, "transport": 12, "activity": 18},
+    "uk": {"hotel": 110, "meal": 20, "transport": 10, "activity": 22},
+    "usa": {"hotel": 130, "meal": 22, "transport": 15, "activity": 25},
+    "uae": {"hotel": 120, "meal": 25, "transport": 14, "activity": 24},
+    "japan": {"hotel": 14000, "meal": 2000, "transport": 800, "activity": 2500},
+    "italy": {"hotel": 110, "meal": 20, "transport": 12, "activity": 20},
+    "indonesia": {"hotel": 450000, "meal": 90000, "transport": 25000, "activity": 80000}
+}
+
+def normalize_city(city: str) -> str:
+    return (city or "").strip().lower()
+
+def get_country_info(city: str):
+    city_key = normalize_city(city)
+    country = CITY_TO_COUNTRY.get(city_key, "india")
+    currency = COUNTRY_CURRENCY.get(country, COUNTRY_CURRENCY["india"])
+    costs = COUNTRY_COST_BASIS.get(country, COUNTRY_COST_BASIS["india"])
+    return country, currency, costs
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
@@ -66,7 +111,7 @@ def create_trip():
             destination=request.form.get('destination'),
             start_date=datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date(),
             end_date=datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date(),
-            budget=request.form.get('budget'),
+            budget=float(request.form.get('budget') or 0),
             notes=request.form.get('notes'),
             image=f"https://picsum.photos/seed/{request.form.get('destination')}/600/400"
         )
@@ -85,11 +130,9 @@ def my_trips():
 @login_required
 def trip_details(id):
     trip = db.session.get(Trip, id)
-
     if trip is None or trip.user_id != current_user.id:
         flash("Trip not found or access denied.", "danger")
         return redirect(url_for('my_trips'))
-
     return render_template('trip-details.html', trip=trip)
 
 @app.route('/explore')
@@ -104,22 +147,16 @@ def explore():
           { "name": "City Name", "desc": "Short description" }
         ]
         """
-
         chat = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}]
         )
-
         raw = chat.choices[0].message.content.strip()
         raw = raw.replace("```json", "").replace("```", "").strip()
-
         destinations = json.loads(raw)
-
         for d in destinations:
             d["image"] = f"https://picsum.photos/seed/{d['name']}/600/400"
-
         return render_template("explore.html", destinations=destinations)
-
     except Exception:
         destinations = [
             {"name": "Paris", "desc": "City of lights & romance", "image": "https://picsum.photos/seed/paris/600/400"},
@@ -129,7 +166,6 @@ def explore():
             {"name": "Rome", "desc": "Ancient history & food", "image": "https://picsum.photos/seed/rome/600/400"},
             {"name": "Bali", "desc": "Nature & temples", "image": "https://picsum.photos/seed/bali/600/400"},
         ]
-
         return render_template("explore.html", destinations=destinations)
 
 @app.route('/itinerary/<path:city>', methods=['GET', 'POST'])
@@ -140,38 +176,73 @@ def itinerary(city):
     if request.method == 'POST':
         start_date = request.form.get('start_date')
         end_date = request.form.get('end_date')
-        budget = request.form.get('budget')
+        budget = float(request.form.get('budget') or 0)
+
+        country, currency, costs = get_country_info(city)
+        budget_in_inr = budget
+        local_budget = budget_in_inr / currency["inr_per_unit"]
+
+        start = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end = datetime.strptime(end_date, "%Y-%m-%d").date()
+        nights = max((end - start).days, 1)
+
+        min_hotel = costs["hotel"] * nights
+        min_food = costs["meal"] * 2 * nights
+        min_transport = costs["transport"] * nights
+        min_activities = costs["activity"] * 4
+
+        min_total_local = min_hotel + min_food + min_transport + min_activities
+        min_total_inr = min_total_local * currency["inr_per_unit"]
+
+        if local_budget < min_total_local:
+            itinerary_text = f"Budget is not sufficient for a proper trip to {city}. Minimum recommended budget is {currency['symbol']}{min_total_local:,.0f} (≈ ₹{min_total_inr:,.0f})."
+            return render_template(
+                "itinerary.html",
+                city=city,
+                image=image,
+                itinerary=itinerary_text,
+                start_date=start_date,
+                end_date=end_date,
+                budget=budget_in_inr
+            )
 
         prompt = f"""
-Create a detailed travel itinerary for {city} with the following constraints:
+Create a detailed travel itinerary for {city} (country: {country}) that is strictly budget-accurate.
 
-- Start date: {start_date}
-- End date: {end_date}
-- Total budget (₹): {budget}
+INPUT:
+- Dates: {start_date} to {end_date} (nights: {nights})
+- User budget (INR): ₹{budget_in_inr:,.0f}
+- User budget (local): {currency['symbol']}{local_budget:,.0f}
 
-Use this format for prices:
-- Always show currency symbol ₹
-- For ranges, use "₹min - ₹max" with spaces around the dash
-- For single prices, use "₹amount"
-- Use commas as thousand separators (e.g., ₹12,000)
-- Avoid concatenating numbers without spaces or dashes
+RULES:
+- Use ONLY the local currency symbol: {currency['symbol']}.
+- Total trip cost must not exceed {currency['symbol']}{local_budget:,.0f}.
+- Use realistic pricing only and avoid unrealistic values.
+- Base your plan on typical budget-level costs:
+  Hotel per night: {currency['symbol']}{costs['hotel']}
+  Meals per day (lunch + dinner total): {currency['symbol']}{costs['meal'] * 2}
+  Local transport per day: {currency['symbol']}{costs['transport']}
+  Paid activity (typical ticket): {currency['symbol']}{costs['activity']}
 
-Output exactly like this (clean bullet formatting):
+FORMAT (exact):
 Day 1: <title>
-Morning (hh:mm - hh:mm):
+Morning (09:00 - 12:00):
 - ...
-Afternoon (hh:mm - hh:mm):
+Afternoon (12:00 - 17:00):
 - ...
-Evening (hh:mm - hh:mm):
+Evening (17:00 - 21:00):
 - ...
 
-Include:
-- must-visit places
-- food recommendations (aligned with budget)
-- transport tips (aligned with budget)
-- best photo spots
+After all days, include:
+
+COST SUMMARY:
+- Hotel: {currency['symbol']}X
+- Food: {currency['symbol']}X
+- Transport: {currency['symbol']}X
+- Activities: {currency['symbol']}X
+TOTAL COST: {currency['symbol']}X
+Remaining Budget: {currency['symbol']}X
 """
-
         chat = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}]
@@ -185,8 +256,9 @@ Include:
             itinerary=itinerary_text,
             start_date=start_date,
             end_date=end_date,
-            budget=budget
+            budget=budget_in_inr
         )
+
     return render_template(
         "itinerary.html",
         city=city,
@@ -196,7 +268,6 @@ Include:
         end_date=None,
         budget=None
     )
-
 
 @app.route('/save_itinerary', methods=['POST'])
 @login_required
@@ -212,7 +283,7 @@ def save_itinerary():
         destination=destination,
         start_date=datetime.strptime(start_date, '%Y-%m-%d').date() if start_date else None,
         end_date=datetime.strptime(end_date, '%Y-%m-%d').date() if end_date else None,
-        budget=float(budget) if budget else None,
+        budget=float(budget or 0),
         notes=notes,
         image=f"https://picsum.photos/seed/{destination}/600/400"
     )
@@ -227,7 +298,6 @@ def save_itinerary():
 @login_required
 def edit_trip(id):
     trip = db.session.get(Trip, id)
-
     if trip is None or trip.user_id != current_user.id:
         flash("Trip not found or access denied.", "danger")
         return redirect(url_for('dashboard'))
@@ -236,9 +306,8 @@ def edit_trip(id):
         trip.destination = request.form.get('destination')
         trip.start_date = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
         trip.end_date = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date()
-        trip.budget = request.form.get('budget')
+        trip.budget = float(request.form.get('budget') or 0)
         trip.notes = request.form.get('notes')
-
         db.session.commit()
         flash("Trip updated successfully!", "success")
         return redirect(url_for('dashboard'))
@@ -249,14 +318,11 @@ def edit_trip(id):
 @login_required
 def delete_trip(id):
     trip = db.session.get(Trip, id)
-
     if trip is None or trip.user_id != current_user.id:
         flash("Trip not found or access denied.", "danger")
         return redirect(url_for('dashboard'))
-
     db.session.delete(trip)
     db.session.commit()
-
     flash("Trip deleted successfully!", "success")
     return redirect(url_for('dashboard'))
 
@@ -272,10 +338,8 @@ def edit_profile():
         current_user.username = request.form['username']
         current_user.phone = request.form['phone']
         db.session.commit()
-
         flash("Profile updated successfully!", "success")
         return redirect(url_for('profile'))
-
     return render_template('edit-profile.html')
 
 @app.route('/dashboard')
@@ -284,7 +348,6 @@ def dashboard():
     trips = db.session.execute(
         db.select(Trip).where(Trip.user_id == current_user.id)
     ).scalars().all()
-
     return render_template('dashboard.html', user_trips=trips)
 
 @app.route('/help')
@@ -311,7 +374,6 @@ def register():
         confirm_password = request.form.get('confirm_password')
 
         existing_user = db.session.execute(db.select(User).where(User.email == email)).scalar_one_or_none()
-
         if existing_user:
             flash("Account already exists.", "warning")
             return redirect(url_for("login"))
@@ -337,16 +399,12 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-
         user = db.session.execute(db.select(User).where(User.email == email)).scalar_one_or_none()
-
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
             return redirect(url_for("dashboard"))
-
         flash("Invalid email or password.", "danger")
         return redirect(url_for('login'))
-
     return render_template('login.html')
 
 @app.route('/logout')
