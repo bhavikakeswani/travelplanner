@@ -34,11 +34,11 @@
 
         <div class="trip-cards">
           {% if user_trips %}
-            {% for trip in user_trips %}
+            {% for trip in user_trips[:3] %}
               <a href="{{ url_for('trip_details', id=trip.id) }}" class="trip-card-link">
 
                 <div class="trip-card">
-                  <img src="{{ trip.image }}" alt="Trip Image">
+                  <img src="{{ trip.image if trip.image else 'https://via.placeholder.com/600x400' }}" alt="Trip Image">
 
                   <div class="trip-info">
                     <h4>{{ trip.destination }}</h4>
