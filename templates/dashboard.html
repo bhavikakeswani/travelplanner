@@ -30,48 +30,47 @@
       </div>
 
       <div class="trip-summary">
-        <h3>Your Upcoming Trips</h3>
 
+        {% if ongoing %}
+        <h3>Your Ongoing Trip</h3>
         <div class="trip-cards">
-          {% if user_trips %}
-            {% for trip in user_trips[:3] %}
-              <a href="{{ url_for('trip_details', id=trip.id) }}" class="trip-card-link">
-
-                <div class="trip-card">
-                  <img src="{{ trip.image if trip.image else 'https://via.placeholder.com/600x400' }}" alt="Trip Image">
-
-                  <div class="trip-info">
-                    <h4>{{ trip.destination }}</h4>
-                    <p><i class="bi bi-calendar-event"></i> {{ trip.start_date }} – {{ trip.end_date }}</p>
-                    <p><i class="bi bi-geo-alt-fill"></i> {{ trip.destination }}</p>
-
-                    <div class="trip-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-
-                      <a href="{{ url_for('edit_trip', id=trip.id) }}"
-                        class="auth-btn"
-                        style="width: auto; padding: 6px 20px;"
-                        onclick="event.stopPropagation()">
-                        Edit
-                      </a>
-
-                      <a href="{{ url_for('delete_trip', id=trip.id) }}"
-                        class="auth-btn delete-btn"
-                        style="width: auto; padding: 6px 20px;"
-                        onclick="event.stopPropagation()">
-                        Delete
-                      </a>
-
-                    </div>
-                  </div>
+          {% for trip in ongoing %}
+            <a href="{{ url_for('trip_details', id=trip.id) }}" class="trip-card-link">
+              <div class="trip-card">
+                <img src="{{ trip.image if trip.image else 'https://via.placeholder.com/600x400' }}" alt="Trip Image">
+                <div class="trip-info">
+                  <h4>{{ trip.destination }}</h4>
+                  <p><i class="bi bi-calendar-event"></i> {{ trip.start_date }} – {{ trip.end_date }}</p>
+                  <p><i class="bi bi-geo-alt-fill"></i> {{ trip.destination }}</p>
                 </div>
-
-              </a>
-
-              {% endfor %}
-          {% else %}
-            <p>No trips yet. Start by adding one!</p>
-          {% endif %}
+              </div>
+            </a>
+          {% endfor %}
         </div>
+        {% endif %}
+
+        {% if upcoming %}
+        <h3>Your Upcoming Trips</h3>
+        <div class="trip-cards">
+          {% for trip in upcoming[:3] %}
+            <a href="{{ url_for('trip_details', id=trip.id) }}" class="trip-card-link">
+              <div class="trip-card">
+                <img src="{{ trip.image if trip.image else 'https://via.placeholder.com/600x400' }}" alt="Trip Image">
+                <div class="trip-info">
+                  <h4>{{ trip.destination }}</h4>
+                  <p><i class="bi bi-calendar-event"></i> {{ trip.start_date }} – {{ trip.end_date }}</p>
+                  <p><i class="bi bi-geo-alt-fill"></i> {{ trip.destination }}</p>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if not upcoming and not ongoing %}
+          <p>No trips yet. Start by adding one!</p>
+        {% endif %}
+
       </div>
 
       <div class="dashboard-actions">
