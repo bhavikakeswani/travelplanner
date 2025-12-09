@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, Float, Text, Date, DateTime, ForeignKey
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime,date
 from dotenv import load_dotenv
 from groq import Groq
 import json
@@ -18,7 +18,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///travelplanner.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 login_manager = LoginManager()
@@ -159,11 +158,11 @@ def explore():
         return render_template("explore.html", destinations=destinations)
     except Exception:
         destinations = [
-            {"name": "Paris", "desc": "City of lights & romance", "image": "https://picsum.photos/seed/paris/600/400"},
-            {"name": "Tokyo", "desc": "Technology & culture hub", "image": "https://picsum.photos/seed/tokyo/600/400"},
+            {"name": "Paris", "desc": "City of lights", "image": "https://picsum.photos/seed/paris/600/400"},
+            {"name": "Tokyo", "desc": "Culture and tech", "image": "https://picsum.photos/seed/tokyo/600/400"},
             {"name": "Goa", "desc": "Beaches & nightlife", "image": "https://picsum.photos/seed/goa/600/400"},
-            {"name": "Dubai", "desc": "Luxury & skyscrapers", "image": "https://picsum.photos/seed/dubai/600/400"},
-            {"name": "Rome", "desc": "Ancient history & food", "image": "https://picsum.photos/seed/rome/600/400"},
+            {"name": "Dubai", "desc": "Luxury & skyline", "image": "https://picsum.photos/seed/dubai/600/400"},
+            {"name": "Rome", "desc": "History & food", "image": "https://picsum.photos/seed/rome/600/400"},
             {"name": "Bali", "desc": "Nature & temples", "image": "https://picsum.photos/seed/bali/600/400"},
         ]
         return render_template("explore.html", destinations=destinations)
@@ -177,6 +176,10 @@ def itinerary(city):
         start_date = request.form.get('start_date')
         end_date = request.form.get('end_date')
         budget = float(request.form.get('budget') or 0)
+
+        if not start_date or not end_date:
+            flash("Please select valid dates.", "warning")
+            return redirect(request.url)
 
         country, currency, costs = get_country_info(city)
         budget_in_inr = budget
@@ -208,45 +211,15 @@ def itinerary(city):
 
         prompt = f"""
 Create a detailed travel itinerary for {city} (country: {country}) that is strictly budget-accurate.
-
-INPUT:
-- Dates: {start_date} to {end_date} (nights: {nights})
-- User budget (INR): ₹{budget_in_inr:,.0f}
-- User budget (local): {currency['symbol']}{local_budget:,.0f}
-
-RULES:
-- Use ONLY the local currency symbol: {currency['symbol']}.
-- Total trip cost must not exceed {currency['symbol']}{local_budget:,.0f}.
-- Use realistic pricing only and avoid unrealistic values.
-- Base your plan on typical budget-level costs:
-  Hotel per night: {currency['symbol']}{costs['hotel']}
-  Meals per day (lunch + dinner total): {currency['symbol']}{costs['meal'] * 2}
-  Local transport per day: {currency['symbol']}{costs['transport']}
-  Paid activity (typical ticket): {currency['symbol']}{costs['activity']}
-
-FORMAT (exact):
-Day 1: <title>
-Morning (09:00 - 12:00):
-- ...
-Afternoon (12:00 - 17:00):
-- ...
-Evening (17:00 - 21:00):
-- ...
-
-After all days, include:
-
-COST SUMMARY:
-- Hotel: {currency['symbol']}X
-- Food: {currency['symbol']}X
-- Transport: {currency['symbol']}X
-- Activities: {currency['symbol']}X
-TOTAL COST: {currency['symbol']}X
-Remaining Budget: {currency['symbol']}X
+Dates: {start_date} to {end_date} (nights: {nights})
+Budget Local: {currency['symbol']}{local_budget:,.0f}
+Use realistic pricing and do not exceed the budget.
 """
         chat = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}]
         )
+
         itinerary_text = chat.choices[0].message.content.strip()
 
         return render_template(
@@ -272,11 +245,11 @@ Remaining Budget: {currency['symbol']}X
 @app.route('/save_itinerary', methods=['POST'])
 @login_required
 def save_itinerary():
-    destination  = request.form.get('destination')
-    notes        = request.form.get('notes')
-    start_date   = request.form.get('start_date')
-    end_date     = request.form.get('end_date')
-    budget       = request.form.get('budget')
+    destination = request.form.get('destination')
+    notes = request.form.get('notes')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
+    budget = request.form.get('budget')
 
     trip = Trip(
         user_id=current_user.id,
@@ -291,7 +264,7 @@ def save_itinerary():
     db.session.add(trip)
     db.session.commit()
 
-    flash("Trip added to your upcoming trips!", "success")
+    flash("Trip added!", "success")
     return redirect(url_for('my_trips'))
 
 @app.route('/edit_trip/<int:id>', methods=['GET', 'POST'])
@@ -299,7 +272,7 @@ def save_itinerary():
 def edit_trip(id):
     trip = db.session.get(Trip, id)
     if trip is None or trip.user_id != current_user.id:
-        flash("Trip not found or access denied.", "danger")
+        flash("Trip not found.", "danger")
         return redirect(url_for('dashboard'))
 
     if request.method == 'POST':
@@ -309,7 +282,7 @@ def edit_trip(id):
         trip.budget = float(request.form.get('budget') or 0)
         trip.notes = request.form.get('notes')
         db.session.commit()
-        flash("Trip updated successfully!", "success")
+        flash("Trip updated!", "success")
         return redirect(url_for('dashboard'))
 
     return render_template('edit-trip.html', trip=trip)
@@ -319,11 +292,12 @@ def edit_trip(id):
 def delete_trip(id):
     trip = db.session.get(Trip, id)
     if trip is None or trip.user_id != current_user.id:
-        flash("Trip not found or access denied.", "danger")
+        flash("Trip not found.", "danger")
         return redirect(url_for('dashboard'))
+
     db.session.delete(trip)
     db.session.commit()
-    flash("Trip deleted successfully!", "success")
+    flash("Trip deleted!", "success")
     return redirect(url_for('dashboard'))
 
 @app.route('/profile')
@@ -338,7 +312,7 @@ def edit_profile():
         current_user.username = request.form['username']
         current_user.phone = request.form['phone']
         db.session.commit()
-        flash("Profile updated successfully!", "success")
+        flash("Profile updated!", "success")
         return redirect(url_for('profile'))
     return render_template('edit-profile.html')
 
@@ -348,7 +322,19 @@ def dashboard():
     trips = db.session.execute(
         db.select(Trip).where(Trip.user_id == current_user.id)
     ).scalars().all()
-    return render_template('dashboard.html', user_trips=trips)
+
+    today = date.today()
+
+    ongoing = [trip for trip in trips if trip.start_date <= today <= trip.end_date]
+    upcoming = [trip for trip in trips if trip.start_date > today]
+
+    return render_template(
+        'dashboard.html',
+        user_trips=trips,
+        ongoing=ongoing,
+        upcoming=upcoming
+    )
+
 
 @app.route('/help')
 @login_required
@@ -373,24 +359,27 @@ def register():
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
 
-        existing_user = db.session.execute(db.select(User).where(User.email == email)).scalar_one_or_none()
-        if existing_user:
+        existing = db.session.execute(
+            db.select(User).where(User.email == email)
+        ).scalar_one_or_none()
+
+        if existing:
             flash("Account already exists.", "warning")
             return redirect(url_for("login"))
 
-        if password == confirm_password:
-            user = User(
-                username=name,
-                email=email,
-                password_hash=generate_password_hash(password, 'pbkdf2:sha256', 8)
-            )
-            db.session.add(user)
-            db.session.commit()
-            login_user(user)
-            return redirect(url_for("dashboard"))
+        if password != confirm_password:
+            flash("Passwords do not match.", "danger")
+            return redirect(url_for("register"))
 
-        flash("Passwords do not match.", "danger")
-        return redirect(url_for("register"))
+        user = User(
+            username=name,
+            email=email,
+            password_hash=generate_password_hash(password, 'pbkdf2:sha256', 8)
+        )
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        return redirect(url_for("dashboard"))
 
     return render_template('register.html')
 
@@ -399,12 +388,18 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        user = db.session.execute(db.select(User).where(User.email == email)).scalar_one_or_none()
+
+        user = db.session.execute(
+            db.select(User).where(User.email == email)
+        ).scalar_one_or_none()
+
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
             return redirect(url_for("dashboard"))
-        flash("Invalid email or password.", "danger")
+
+        flash("Invalid credentials.", "danger")
         return redirect(url_for('login'))
+
     return render_template('login.html')
 
 @app.route('/logout')
