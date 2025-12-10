@@ -935,3 +935,11 @@ body.itinerary-page {
   color: inherit !important;
   text-decoration: none !important;
 }
+
+.trip-card img {
+  transition: transform 0.3s ease;
+}
+
+.trip-card:hover img {
+  transform: scale(1.05);
+}
