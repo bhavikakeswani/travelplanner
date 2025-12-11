@@ -105,18 +105,32 @@ def home():
 @login_required
 def create_trip():
     if request.method == 'POST':
+        start = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
+        end = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date()
+
+        existing_trips = db.session.execute(
+            db.select(Trip).where(Trip.user_id == current_user.id)
+        ).scalars().all()
+
+        for t in existing_trips:
+            if not (end < t.start_date or start > t.end_date):
+                flash(f"Trip overlaps with an existing trip from {t.start_date} to {t.end_date}.", "danger")
+                return redirect(url_for('create_trip'))
+
         trip = Trip(
             user_id=current_user.id,
             destination=request.form.get('destination'),
-            start_date=datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date(),
-            end_date=datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date(),
+            start_date=start,
+            end_date=end,
             budget=float(request.form.get('budget') or 0),
             notes=request.form.get('notes'),
             image=f"https://picsum.photos/seed/{request.form.get('destination')}/600/400"
         )
+
         db.session.add(trip)
         db.session.commit()
         return redirect(url_for('my_trips'))
+
     return render_template('create-trip.html')
 
 @app.route('/my_trips')
@@ -251,11 +265,31 @@ def save_itinerary():
     end_date = request.form.get('end_date')
     budget = request.form.get('budget')
 
+    try:
+        start = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end = datetime.strptime(end_date, '%Y-%m-%d').date()
+    except Exception:
+        flash("Invalid dates provided.", "danger")
+        return redirect(request.referrer)
+
+    if start > end:
+        flash("Start date cannot be after end date.", "danger")
+        return redirect(request.referrer)
+
+    existing_trips = db.session.execute(
+        db.select(Trip).where(Trip.user_id == current_user.id)
+    ).scalars().all()
+
+    for t in existing_trips:
+        if not (end < t.start_date or start > t.end_date):
+            flash(f"Trip overlaps with an existing trip from {t.start_date} to {t.end_date}.", "danger")
+            return redirect(request.referrer)
+
     trip = Trip(
         user_id=current_user.id,
         destination=destination,
-        start_date=datetime.strptime(start_date, '%Y-%m-%d').date() if start_date else None,
-        end_date=datetime.strptime(end_date, '%Y-%m-%d').date() if end_date else None,
+        start_date=start,
+        end_date=end,
         budget=float(budget or 0),
         notes=notes,
         image=f"https://picsum.photos/seed/{destination}/600/400"
@@ -276,12 +310,29 @@ def edit_trip(id):
         return redirect(url_for('dashboard'))
 
     if request.method == 'POST':
+        start = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
+        end = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date()
+
+        if start > end:
+            flash("Start date cannot be after end date.", "danger")
+            return redirect(url_for('edit_trip', id=id))
+
+        existing_trips = db.session.execute(
+            db.select(Trip).where(Trip.user_id == current_user.id, Trip.id != id)
+        ).scalars().all()
+
+        for t in existing_trips:
+            if not (end < t.start_date or start > t.end_date):
+                flash(f"Edited dates overlap with an existing trip from {t.start_date} to {t.end_date}.", "danger")
+                return redirect(url_for('edit_trip', id=id))
+
         trip.destination = request.form.get('destination')
-        trip.start_date = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
-        trip.end_date = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date()
+        trip.start_date = start
+        trip.end_date = end
         trip.budget = float(request.form.get('budget') or 0)
         trip.notes = request.form.get('notes')
         db.session.commit()
+
         flash("Trip updated!", "success")
         return redirect(url_for('dashboard'))
 
