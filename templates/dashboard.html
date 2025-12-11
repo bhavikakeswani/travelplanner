@@ -50,7 +50,7 @@
         {% endif %}
 
         {% if upcoming %}
-        <h3>Your Upcoming Trips</h3>
+        <h3 class="upcoming-trips-title">Your Upcoming Trips</h3>
         <div class="trip-cards">
           {% for trip in upcoming[:3] %}
             <a href="{{ url_for('trip_details', id=trip.id) }}" class="trip-card-link">
