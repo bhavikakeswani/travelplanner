@@ -376,14 +376,16 @@ def dashboard():
 
     today = date.today()
 
-    ongoing = [trip for trip in trips if trip.start_date <= today <= trip.end_date]
-    upcoming = [trip for trip in trips if trip.start_date > today]
+    ongoing = [t for t in trips if t.start_date <= today <= t.end_date]
+    upcoming = [t for t in trips if t.start_date > today]
+    past = [t for t in trips if t.end_date < today]
 
     return render_template(
         'dashboard.html',
         user_trips=trips,
         ongoing=ongoing,
-        upcoming=upcoming
+        upcoming=upcoming,
+        past=past
     )
 
 
