@@ -949,7 +949,7 @@ body.itinerary-page {
 }
 
 .upcoming-trips-title {
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .past-trip {
@@ -963,4 +963,8 @@ body.itinerary-page {
   padding: 2px 6px;
   border-radius: 6px;
   margin-left: 6px;
+}
+
+.past-trips-title {
+  margin-top: 20px;
 }
