@@ -58,6 +58,9 @@ COUNTRY_COST_BASIS = {
     "indonesia": {"hotel": 450000, "meal": 90000, "transport": 25000, "activity": 80000}
 }
 
+def fmt_date(d: date) -> str:
+    return d.strftime("%d %b %Y")
+
 def normalize_city(city: str) -> str:
     return (city or "").strip().lower()
 
@@ -114,7 +117,10 @@ def create_trip():
 
         for t in existing_trips:
             if not (end < t.start_date or start > t.end_date):
-                flash(f"Trip overlaps with an existing trip from {t.start_date} to {t.end_date}.", "danger")
+                flash( f"Trip overlaps with an existing trip from "
+                    f"{fmt_date(t.start_date)} to {fmt_date(t.end_date)}.",
+                    "danger")
+
                 return redirect(url_for('create_trip'))
 
         trip = Trip(
@@ -282,7 +288,11 @@ def save_itinerary():
 
     for t in existing_trips:
         if not (end < t.start_date or start > t.end_date):
-            flash(f"Trip overlaps with an existing trip from {t.start_date} to {t.end_date}.", "danger")
+            flash(
+                f"Trip overlaps with an existing trip from "
+                f"{fmt_date(t.start_date)} to {fmt_date(t.end_date)}.",
+                "danger")
+            
             return redirect(request.referrer)
 
     trip = Trip(
