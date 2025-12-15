@@ -3,48 +3,62 @@
 {% block title %}Create Trip - TravelPlanner{% endblock %}
 
 {% block content %}
-  <section class="auth-container create-trip-page">
-    <div class="auth-card create-trip-card">
-      <h2><i class="bi bi-plus-circle"></i> Create New Trip</h2>
+<section class="auth-container create-trip-page">
+  <div class="auth-card create-trip-card">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h2><i class="bi bi-plus-circle"></i> Create New Trip</h2>
+
+    <form method="POST" action="{{ url_for('create_trip') }}" class="create-trip-container">
       
-      <form method="POST" action="{{ url_for('create_trip') }}" class="create-trip-container">
-        
-        <div class="input-group">
-          <i class="bi bi-geo-alt-fill"></i>
-          <input type="text" name="destination" placeholder="Destination (e.g., Paris)" required>
-        </div>
+      <div class="input-group">
+        <i class="bi bi-geo-alt-fill"></i>
+        <input type="text" name="destination" placeholder="Destination (e.g., Paris)" required>
+      </div>
 
-        <div class="input-group">
-          <i class="bi bi-calendar-event"></i>
-          <input type="date" name="start_date" required>
-        </div>
+      <div class="input-group">
+        <i class="bi bi-calendar-event"></i>
+        <input type="date" name="start_date" required>
+      </div>
 
-        <div class="input-group">
-          <i class="bi bi-calendar-check"></i>
-          <input type="date" name="end_date" required>
-        </div>
+      <div class="input-group">
+        <i class="bi bi-calendar-check"></i>
+        <input type="date" name="end_date" required>
+      </div>
 
-        <div class="input-group">
-          <i class="bi bi-cash-coin"></i>
-          <input type="number" name="budget" placeholder="Budget (USD)" min="0" step="100">
-        </div>
+      <div class="input-group">
+        <i class="bi bi-cash-coin"></i>
+        <input type="number" name="budget" placeholder="Budget (USD)" min="0" step="100">
+      </div>
 
-        <div class="input-group">
-          <i class="bi bi-card-text"></i>
-          <textarea name="notes" placeholder="Trip notes or itinerary..." rows="4"></textarea>
-        </div>
+      <div class="input-group">
+        <i class="bi bi-card-text"></i>
+        <textarea name="notes" placeholder="Trip notes or itinerary..." rows="4"></textarea>
+      </div>
 
-        <div class="input-group">
-          <i class="bi bi-image-fill"></i>
-          <input type="url" name="image" placeholder="Image URL (optional)">
-        </div>
+      <div class="input-group">
+        <i class="bi bi-image-fill"></i>
+        <input type="url" name="image" placeholder="Image URL (optional)">
+      </div>
 
-        <button type="submit" class="auth-btn">Save Trip</button>
-      </form>
+      <button type="submit" class="auth-btn">Save Trip</button>
+    </form>
 
-      <p class="auth-footer">
-        <a href="{{url_for('dashboard')}}"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
-      </p>
-    </div>
-  </section>
+    <p class="auth-footer">
+      <a href="{{ url_for('dashboard') }}">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+      </a>
+    </p>
+
+  </div>
+</section>
 {% endblock %}

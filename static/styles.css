@@ -764,6 +764,10 @@ body.mytrips-page {
   color: #000;
 }
 
+.flash.danger {
+  background: rgba(220, 53, 69, 0.85);
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
