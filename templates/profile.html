@@ -8,7 +8,10 @@
     <div class="profile-card">
       <div class="profile-header text-center">
         <div class="profile-img mb-3">
-          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile Picture">
+          <img
+            src="{{ gravatar_url(current_user.email) }}"
+            alt="Profile Picture"
+          >
         </div>
         <h3 class="profile-name">{{current_user.username|title}}</h3>
         <p class="profile-email text-muted">{{current_user.email}}</p>

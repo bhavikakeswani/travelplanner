@@ -7,15 +7,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime,date
 from dotenv import load_dotenv
 from groq import Groq
+import hashlib
 import json
 import os
 
 load_dotenv()
 
+def gravatar_url(email, size=180, default="retro"):
+    email = email.strip().lower()
+    email_hash = hashlib.md5(email.encode("utf-8")).hexdigest()
+    return f"https://www.gravatar.com/avatar/{email_hash}?s={size}&d={default}"
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///travelplanner.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.jinja_env.globals.update(gravatar_url=gravatar_url)
 
 db = SQLAlchemy(app)
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
