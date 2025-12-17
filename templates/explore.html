@@ -12,7 +12,7 @@
         <a href="{{url_for('dashboard')}}" class="logout-btn">Back</a>
       </div>
 
-      <div class="input-group" style="margin-bottom: 25px;">
+      <div class="input-group" style="margin-bottom: 10px;">
         <i class="bi bi-search"></i>
         <input
           type="text"
@@ -21,14 +21,19 @@
         >
       </div>
 
+      <!-- No results message -->
+      <p id="noResults" style="display:none; margin-bottom: 20px; opacity: 0.7;">
+        No destinations found
+      </p>
+
       <div class="trip-summary">
         <h3>Popular Places</h3>
         <div class="trip-cards">
 
           {% for d in destinations %}
           <a href="{{ url_for('itinerary', city=d.name, image=d.image) }}"
-            class="trip-card-link destination-card"
-            data-name="{{ d.name | lower }}">
+             class="trip-card-link destination-card"
+             data-name="{{ d.name | lower }}">
             <div class="trip-card">
               <img src="{{ d.image }}" alt="{{ d.name }}">
               <div class="trip-info">
@@ -43,7 +48,7 @@
       </div>
 
       <div class="dashboard-actions">
-        <a href="{{url_for('create_trip')}}"class="btn">Plan Your Trip</a>
+        <a href="{{url_for('create_trip')}}" class="btn">Plan Your Trip</a>
       </div>
 
       <div class="dashboard-footer">
@@ -56,14 +61,20 @@
   <script>
     const searchInput = document.getElementById("searchInput");
     const cards = document.querySelectorAll(".destination-card");
+    const noResults = document.getElementById("noResults");
 
     searchInput.addEventListener("input", function () {
       const query = this.value.toLowerCase().trim();
+      let visibleCount = 0;
 
       cards.forEach(card => {
         const name = card.dataset.name;
-        card.style.display = name.includes(query) ? "block" : "none";
+        const match = name.includes(query);
+        card.style.display = match ? "block" : "none";
+        if (match) visibleCount++;
       });
+
+      noResults.style.display = visibleCount === 0 ? "block" : "none";
     });
   </script>
-{% endblock%}
+{% endblock %}
