@@ -21,11 +21,6 @@
         >
       </div>
 
-      <!-- No results message -->
-      <p id="noResults" style="display:none; margin-bottom: 20px; opacity: 0.7;">
-        No destinations found
-      </p>
-
       <div class="trip-summary">
         <h3>Popular Places</h3>
         <div class="trip-cards">
@@ -60,21 +55,47 @@
   
   <script>
     const searchInput = document.getElementById("searchInput");
-    const cards = document.querySelectorAll(".destination-card");
-    const noResults = document.getElementById("noResults");
+    const cardsContainer = document.querySelector(".trip-cards");
+    const originalCards = Array.from(document.querySelectorAll(".destination-card"));
+    let dynamicCard = null;
+
+    function createDynamicCard(city) {
+      const formattedCity = city.charAt(0).toUpperCase() + city.slice(1);
+      const a = document.createElement("a");
+      a.href = `/itinerary/${encodeURIComponent(city)}`;
+      a.className = "trip-card-link destination-card";
+      a.dataset.name = city.toLowerCase();
+      a.innerHTML = `
+        <div class="trip-card">
+          <img src="https://picsum.photos/seed/${encodeURIComponent(city)}/600/400" alt="${formattedCity}">
+          <div class="trip-info">
+            <h4>${formattedCity}</h4>
+            <p>AI-generated itinerary available</p>
+          </div>
+        </div>
+      `;
+      return a;
+    }
 
     searchInput.addEventListener("input", function () {
       const query = this.value.toLowerCase().trim();
-      let visibleCount = 0;
+      let matches = 0;
 
-      cards.forEach(card => {
-        const name = card.dataset.name;
-        const match = name.includes(query);
+      if (dynamicCard) {
+        dynamicCard.remove();
+        dynamicCard = null;
+      }
+
+      originalCards.forEach(card => {
+        const match = card.dataset.name.includes(query);
         card.style.display = match ? "block" : "none";
-        if (match) visibleCount++;
+        if (match) matches++;
       });
 
-      noResults.style.display = visibleCount === 0 ? "block" : "none";
+      if (query && matches === 0) {
+        dynamicCard = createDynamicCard(query);
+        cardsContainer.prepend(dynamicCard);
+      }
     });
   </script>
 {% endblock %}
