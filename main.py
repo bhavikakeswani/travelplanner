@@ -214,7 +214,12 @@ def itinerary(city):
 
         start = datetime.strptime(start_date, "%Y-%m-%d").date()
         end = datetime.strptime(end_date, "%Y-%m-%d").date()
-        nights = max((end - start).days, 1)
+
+        if start > end:
+            flash("End date cannot be before start date.", "danger")
+            return redirect(request.url)
+
+        nights = (end - start).days or 1
 
         min_hotel = costs["hotel"] * nights
         min_food = costs["meal"] * 2 * nights
