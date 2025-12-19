@@ -78,6 +78,36 @@ def get_country_info(city: str):
     costs = COUNTRY_COST_BASIS.get(country, COUNTRY_COST_BASIS["india"])
     return country, currency, costs
 
+def resolve_city(city: str):
+    prompt = f"""
+You are a location validator.
+
+User entered: "{city}"
+
+If this is a real city:
+- Return the corrected city name ONLY.
+
+If it is NOT a real city:
+- Return ONLY: INVALID
+
+No explanation.
+"""
+
+    try:
+        chat = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        result = chat.choices[0].message.content.strip()
+
+        if result.upper() == "INVALID":
+            return None
+
+        return result
+    except Exception:
+        return None
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
@@ -198,6 +228,17 @@ def explore():
 @login_required
 def itinerary(city):
     image = request.args.get('image')
+
+    corrected_city = resolve_city(city)
+
+    if not corrected_city:
+        flash("Unknown destination. Please enter a valid city.", "danger")
+        return redirect(url_for("explore"))
+
+    if normalize_city(corrected_city) != normalize_city(city):
+        flash(f"Showing itinerary for {corrected_city}.", "info")
+
+    city = corrected_city
 
     if request.method == 'POST':
         start_date = request.form.get('start_date')
