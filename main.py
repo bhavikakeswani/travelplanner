@@ -179,7 +179,21 @@ def create_trip():
 @app.route('/my_trips')
 @login_required
 def my_trips():
-    trips = db.session.execute(db.select(Trip).where(Trip.user_id == current_user.id)).scalars().all()
+    today = date.today()
+
+    trips = (
+        db.session.execute(
+            db.select(Trip)
+            .where(Trip.user_id == current_user.id)
+            .order_by(
+                (Trip.end_date < today),  
+                Trip.start_date.desc()    
+            )
+        )
+        .scalars()
+        .all()
+    )
+
     return render_template('my-trips.html', trips=trips)
 
 @app.route('/trip/<int:id>')
