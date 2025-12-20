@@ -4,9 +4,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, Float, Text, Date, DateTime, ForeignKey
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from email.message import EmailMessage
 from datetime import datetime,date
 from dotenv import load_dotenv
 from groq import Groq
+import smtplib
 import hashlib
 import json
 import os
@@ -107,6 +109,29 @@ No explanation.
         return result
     except Exception:
         return None
+
+def send_contact_email(name, sender_email, message):
+    email_address = os.getenv("EMAIL_KEY")
+    email_password = os.getenv("PASSWORD_KEY")
+
+    msg = EmailMessage()
+    msg["Subject"] = "New Contact Message - TravelPlanner"
+    msg["From"] = email_address
+    msg["To"] = email_address
+
+    msg.set_content(f"""
+You have received a new message from TravelPlanner.
+
+Name: {name}
+Email: {sender_email}
+
+Message:
+{message}
+""")
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(email_address, email_password)
+        smtp.send_message(msg)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -476,9 +501,26 @@ def help():
 def about():
     return render_template('about.html')
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 @login_required
 def contact():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
+
+        if not name or not email or not message:
+            flash("All fields are required.", "danger")
+            return redirect(url_for('contact'))
+
+        try:
+            send_contact_email(name, email, message)
+            flash("Message sent successfully! 📩", "success")
+        except Exception as e:
+            flash("Failed to send message. Please try again later.", "danger")
+
+        return redirect(url_for('contact'))
+
     return render_template('contact.html')
 
 @app.route('/register', methods=['GET', 'POST'])
