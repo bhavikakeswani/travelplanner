@@ -449,18 +449,20 @@ def edit_trip(id):
 
     return render_template('edit-trip.html', trip=trip)
 
-@app.route('/delete_trip/<int:id>')
+@app.route('/delete_trip/<int:id>', methods=['POST'])
 @login_required
 def delete_trip(id):
     trip = db.session.get(Trip, id)
+
     if trip is None or trip.user_id != current_user.id:
-        flash("Trip not found.", "danger")
-        return redirect(url_for('dashboard'))
+        flash("Trip not found or access denied.", "danger")
+        return redirect(url_for('my_trips'))
 
     db.session.delete(trip)
     db.session.commit()
-    flash("Trip deleted!", "success")
-    return redirect(url_for('dashboard'))
+
+    flash("Trip deleted successfully!", "success")
+    return redirect(url_for('my_trips'))
 
 @app.route('/profile')
 @login_required
