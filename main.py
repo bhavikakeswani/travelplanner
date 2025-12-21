@@ -407,9 +407,10 @@ def save_itinerary():
 @login_required
 def edit_trip(id):
     trip = db.session.get(Trip, id)
+
     if trip is None or trip.user_id != current_user.id:
-        flash("Trip not found.", "danger")
-        return redirect(url_for('dashboard'))
+        flash("Trip not found or access denied.", "danger")
+        return redirect(url_for('my_trips'))
 
     if request.method == 'POST':
         start = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
@@ -420,12 +421,19 @@ def edit_trip(id):
             return redirect(url_for('edit_trip', id=id))
 
         existing_trips = db.session.execute(
-            db.select(Trip).where(Trip.user_id == current_user.id, Trip.id != id)
+            db.select(Trip).where(
+                Trip.user_id == current_user.id,
+                Trip.id != id
+            )
         ).scalars().all()
 
         for t in existing_trips:
             if not (end < t.start_date or start > t.end_date):
-                flash(f"Edited dates overlap with an existing trip from {t.start_date} to {t.end_date}.", "danger")
+                flash(
+                    f"Edited dates overlap with an existing trip from "
+                    f"{fmt_date(t.start_date)} to {fmt_date(t.end_date)}.",
+                    "danger"
+                )
                 return redirect(url_for('edit_trip', id=id))
 
         trip.destination = request.form.get('destination')
@@ -433,10 +441,11 @@ def edit_trip(id):
         trip.end_date = end
         trip.budget = float(request.form.get('budget') or 0)
         trip.notes = request.form.get('notes')
-        db.session.commit()
 
-        flash("Trip updated!", "success")
-        return redirect(url_for('dashboard'))
+        db.session.commit()
+        flash("Trip updated successfully!", "success")
+
+        return redirect(url_for('trip_details', id=trip.id))
 
     return render_template('edit-trip.html', trip=trip)
 
