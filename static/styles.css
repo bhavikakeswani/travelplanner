@@ -994,3 +994,7 @@ body.itinerary-page {
 .past-trips-title {
   margin-top: 20px;
 }
+
+body.trip-page {
+  padding-top: 40px;
+}
