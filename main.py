@@ -118,12 +118,13 @@ def send_contact_email(name, sender_email, message):
     msg["Subject"] = "New Contact Message - TravelPlanner"
     msg["From"] = email_address
     msg["To"] = email_address
+    msg["Reply-To"] = sender_email
 
     msg.set_content(f"""
-You have received a new message from TravelPlanner.
+New message from TravelPlanner contact form
 
 Name: {name}
-Email: {sender_email}
+User Email: {sender_email}
 
 Message:
 {message}
