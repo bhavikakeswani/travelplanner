@@ -998,3 +998,20 @@ body.itinerary-page {
 body.trip-page {
   padding-top: 40px;
 }
+
+.trip-card,
+.dashboard-card,
+.profile-card,
+.trip-details-card,
+.itinerary-box {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.trip-card:hover,
+.dashboard-card:hover,
+.profile-card:hover,
+.trip-details-card:hover,
+.itinerary-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
