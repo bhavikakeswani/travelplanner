@@ -58,7 +58,13 @@
             name="notes" 
             placeholder="Trip notes or itinerary..." 
             rows="4"
-          >{{ trip.notes }}</textarea>
+          >{{
+            trip.notes
+            | replace("**", "")
+            | replace("•", "-")
+            | replace("* ", "- ")
+            | replace("*", "")
+          }}</textarea>
         </div>
 
         <div class="input-group">
