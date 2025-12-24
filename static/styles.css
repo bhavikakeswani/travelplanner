@@ -1015,3 +1015,13 @@ body.trip-page {
   transform: translateY(-3px);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
+
+body.contact-page .flash-messages {
+  position: fixed;
+  top: 110px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 900px;
+  z-index: 2000;
+}
