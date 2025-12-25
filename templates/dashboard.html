@@ -68,7 +68,13 @@
         {% endif %}
 
         {% if not upcoming and not ongoing %}
-          <p>No trips yet. Start by adding one!</p>
+          <div class="empty-state">
+            <p>No trips yet</p>
+            <p class="empty-subtext">Start planning your first adventure today.</p>
+            <a href="{{ url_for('create_trip') }}" class="auth-btn empty-cta">
+              <i class="bi bi-plus-circle"></i> Create Your First Trip
+            </a>
+          </div>
         {% endif %}
 
         {% if past %}
