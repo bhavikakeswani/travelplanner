@@ -516,11 +516,16 @@ def about():
     return render_template('about.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
-@login_required
+@login_required  
 def contact():
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
+        if current_user.is_authenticated:
+            name = current_user.username
+            email = current_user.email
+        else:
+            name = request.form.get('name')
+            email = request.form.get('email')
+
         message = request.form.get('message')
 
         if not name or not email or not message:
