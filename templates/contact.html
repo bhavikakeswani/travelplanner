@@ -18,6 +18,8 @@
             type="text"
             name="name"
             placeholder="Your Name"
+            value="{{ current_user.username if current_user.is_authenticated else '' }}"
+            {% if current_user.is_authenticated %}readonly{% endif %}
             required
           />
         </div>
@@ -28,6 +30,8 @@
             type="email"
             name="email"
             placeholder="Your Email"
+            value="{{ current_user.email if current_user.is_authenticated else '' }}"
+            {% if current_user.is_authenticated %}readonly{% endif %}
             required
           />
         </div>
