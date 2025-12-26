@@ -269,14 +269,16 @@ def explore():
 def itinerary(city):
     image = request.args.get('image')
 
-    corrected_city = resolve_city(city)
+    city_key = normalize_city(city)
+
+    if city_key in CITY_TO_COUNTRY:
+        corrected_city = city.title()
+    else:
+        corrected_city = resolve_city(city)
 
     if not corrected_city:
         flash("Unknown destination. Please enter a valid city.", "danger")
         return redirect(url_for("explore"))
-
-    if normalize_city(corrected_city) != normalize_city(city):
-        flash(f"Showing itinerary for {corrected_city}.", "info")
 
     city = corrected_city
 
