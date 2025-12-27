@@ -15,7 +15,13 @@
 
       <div class="form-group">
         <label>Phone</label>
-        <input type="text" name="phone" value="{{ current_user.phone or '' }}">
+        <input
+          type="tel"
+          name="phone"
+          value="{{ current_user.phone or '' }}"
+          pattern="[0-9]{10,13}"
+          maxlength="10"
+        >
       </div>
 
       <button type="submit" class="auth-btn save-btn">Save Changes</button>

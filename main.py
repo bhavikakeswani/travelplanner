@@ -476,11 +476,22 @@ def profile():
 @login_required
 def edit_profile():
     if request.method == 'POST':
-        current_user.username = request.form['username']
-        current_user.phone = request.form['phone']
+        username = request.form.get('username')
+        phone = request.form.get('phone')
+
+        if phone:
+            phone = ''.join(filter(str.isdigit, phone))
+
+            if len(phone) < 10 or len(phone) > 13:
+                flash("Please enter a valid phone number.", "danger")
+                return redirect(url_for('edit_profile'))
+
+        current_user.username = username
+        current_user.phone = phone
         db.session.commit()
-        flash("Profile updated!", "success")
+
         return redirect(url_for('profile'))
+
     return render_template('edit-profile.html')
 
 @app.route('/dashboard')
