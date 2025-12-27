@@ -80,6 +80,12 @@ def get_country_info(city: str):
     costs = COUNTRY_COST_BASIS.get(country, COUNTRY_COST_BASIS["india"])
     return country, currency, costs
 
+def city_image(city: str, country: str | None = None):
+    query = city
+    if country:
+        query = f"{city},{country}"
+    return f"https://source.unsplash.com/600x400/?{query},landmark,travel"
+
 def resolve_city(city: str):
     prompt = f"""
 You are a location validator.
@@ -171,6 +177,8 @@ def home():
 @login_required
 def create_trip():
     if request.method == 'POST':
+        destination = request.form.get('destination')
+
         start = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
         end = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date()
 
@@ -180,20 +188,23 @@ def create_trip():
 
         for t in existing_trips:
             if not (end < t.start_date or start > t.end_date):
-                flash( f"Trip overlaps with an existing trip from "
+                flash(
+                    f"Trip overlaps with an existing trip from "
                     f"{fmt_date(t.start_date)} to {fmt_date(t.end_date)}.",
-                    "danger")
-
+                    "danger"
+                )
                 return redirect(url_for('create_trip'))
+
+        country = CITY_TO_COUNTRY.get(normalize_city(destination))
 
         trip = Trip(
             user_id=current_user.id,
-            destination=request.form.get('destination'),
+            destination=destination,
             start_date=start,
             end_date=end,
             budget=float(request.form.get('budget') or 0),
             notes=request.form.get('notes'),
-            image=f"https://picsum.photos/seed/{request.form.get('destination')}/600/400"
+            image=city_image(destination, country)
         )
 
         db.session.add(trip)
@@ -251,23 +262,27 @@ def explore():
         raw = raw.replace("```json", "").replace("```", "").strip()
         destinations = json.loads(raw)
         for d in destinations:
-            d["image"] = f"https://picsum.photos/seed/{d['name']}/600/400"
+            city = d["name"]
+            country = CITY_TO_COUNTRY.get(normalize_city(city))
+            d["image"] = city_image(city, country)
+
         return render_template("explore.html", destinations=destinations)
     except Exception:
         destinations = [
-            {"name": "Paris", "desc": "City of lights", "image": "https://picsum.photos/seed/paris/600/400"},
-            {"name": "Tokyo", "desc": "Culture and tech", "image": "https://picsum.photos/seed/tokyo/600/400"},
-            {"name": "Goa", "desc": "Beaches & nightlife", "image": "https://picsum.photos/seed/goa/600/400"},
-            {"name": "Dubai", "desc": "Luxury & skyline", "image": "https://picsum.photos/seed/dubai/600/400"},
-            {"name": "Rome", "desc": "History & food", "image": "https://picsum.photos/seed/rome/600/400"},
-            {"name": "Bali", "desc": "Nature & temples", "image": "https://picsum.photos/seed/bali/600/400"},
+            {"name": "Paris", "desc": "City of lights", "image": city_image("Paris", "france")},
+            {"name": "Tokyo", "desc": "Culture and tech", "image": city_image("Tokyo", "japan")},
+            {"name": "Goa", "desc": "Beaches & nightlife", "image": city_image("Goa", "india")},
+            {"name": "Dubai", "desc": "Luxury & skyline", "image": city_image("Dubai", "uae")},
+            {"name": "Rome", "desc": "History & food", "image": city_image("Rome", "italy")},
+            {"name": "Bali", "desc": "Nature & temples", "image": city_image("Bali", "indonesia")},
         ]
         return render_template("explore.html", destinations=destinations)
 
 @app.route('/itinerary/<path:city>', methods=['GET', 'POST'])
 @login_required
 def itinerary(city):
-    image = request.args.get('image')
+    country = CITY_TO_COUNTRY.get(normalize_city(city))
+    image = city_image(city, country)
 
     city_key = normalize_city(city)
 
@@ -386,9 +401,12 @@ def save_itinerary():
             flash(
                 f"Trip overlaps with an existing trip from "
                 f"{fmt_date(t.start_date)} to {fmt_date(t.end_date)}.",
-                "danger")
-            
+                "danger"
+            )
             return redirect(request.referrer)
+
+    country = CITY_TO_COUNTRY.get(normalize_city(destination))
+    image = city_image(destination, country)
 
     trip = Trip(
         user_id=current_user.id,
@@ -397,7 +415,7 @@ def save_itinerary():
         end_date=end,
         budget=float(budget or 0),
         notes=notes,
-        image=f"https://picsum.photos/seed/{destination}/600/400"
+        image=image
     )
 
     db.session.add(trip)
