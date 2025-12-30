@@ -1025,3 +1025,31 @@ body.contact-page .flash-messages {
   max-width: 900px;
   z-index: 2000;
 }
+
+.empty-state {
+  margin-top: 30px;
+  padding: 0px 20px 10px;
+}
+
+.empty-state p {
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+.empty-subtext {
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.empty-state .auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
