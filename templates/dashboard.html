@@ -71,7 +71,7 @@
           <div class="empty-state">
             <p>No trips yet</p>
             <p class="empty-subtext">Start planning your first adventure today.</p>
-            <a href="{{ url_for('create_trip') }}" class="auth-btn empty-cta">
+            <a href="{{ url_for('create_trip') }}" class="auth-btn">
               <i class="bi bi-plus-circle"></i> Create Your First Trip
             </a>
           </div>
@@ -101,7 +101,7 @@
       </div>
 
       <div class="dashboard-actions">
-        <a href="{{url_for('create_trip')}}" class="auth-btn"><i class="bi bi-plus-circle"></i> Add New Trip</a>
+        <a href="{{url_for('explore')}}" class="auth-btn"><i class="bi bi-plus-circle"></i> Add New Trip</a>
       </div>
 
       <footer class="dashboard-footer">
