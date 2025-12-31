@@ -1053,3 +1053,10 @@ body.contact-page .flash-messages {
   font-size: 1rem;
   transition: all 0.3s ease;
 }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #ffb703;
+  outline-offset: 3px;
+}
