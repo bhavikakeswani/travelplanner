@@ -287,13 +287,6 @@ body.dashboard-page {
   gap: 20px;
 }
 
-.trip-card {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 15px;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
 .trip-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
@@ -590,13 +583,6 @@ body.explore-page {
   padding-top: 80px;
 }
 
-.trip-card {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 15px 20px;
-  border-radius: 15px;
-}
-
 .btn,
 .auth-btn,
 .auth-btn a {
@@ -887,10 +873,6 @@ body.itinerary-page {
   color: #ddd;
 }
 
-.trip-card {
-  cursor: pointer;
-}
-
 .edit-profile-section {
   min-height: 100vh;
   display: flex;
@@ -942,6 +924,14 @@ body.itinerary-page {
   margin-top: 10px;
 }
 
+.trip-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
 .trip-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -949,11 +939,7 @@ body.itinerary-page {
 }
 
 .trip-card-link {
-  display: contents;
-}
-
-.trip-card {
-  cursor: pointer;
+  display: block;
 }
 
 .trip-card-link,
@@ -968,10 +954,6 @@ body.itinerary-page {
 
 .trip-card:hover img {
   transform: scale(1.05);
-}
-
-.trip-card {
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .upcoming-trips-title {
