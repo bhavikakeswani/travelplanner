@@ -67,7 +67,11 @@
       a.dataset.name = city.toLowerCase();
       a.innerHTML = `
         <div class="trip-card">
-          <img src="https://picsum.photos/seed/${encodeURIComponent(city)}/600/400" alt="${formattedCity}">
+          <img 
+            src="https://picsum.photos/seed/${encodeURIComponent(city)}/600/400"
+            alt="${formattedCity}"
+            onerror="this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80'"
+          >
           <div class="trip-info">
             <h4>${formattedCity}</h4>
             <p>AI-generated itinerary available</p>

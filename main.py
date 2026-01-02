@@ -8,6 +8,7 @@ from email.message import EmailMessage
 from datetime import datetime,date
 from dotenv import load_dotenv
 from groq import Groq
+import urllib.parse
 import smtplib
 import hashlib
 import json
@@ -81,10 +82,8 @@ def get_country_info(city: str):
     return country, currency, costs
 
 def city_image(city: str, country: str | None = None):
-    query = city
-    if country:
-        query = f"{city},{country}"
-    return f"https://source.unsplash.com/600x400/?{query},landmark,travel"
+    seed = hashlib.md5(city.lower().encode()).hexdigest()
+    return f"https://picsum.photos/seed/{seed}/600/400"
 
 def resolve_city(city: str):
     prompt = f"""
@@ -265,6 +264,13 @@ def explore():
             city = d["name"]
             country = CITY_TO_COUNTRY.get(normalize_city(city))
             d["image"] = city_image(city, country)
+
+        for d in destinations:
+            city = d["name"]
+            country = CITY_TO_COUNTRY.get(normalize_city(city))
+            d["image"] = city_image(city, country)
+            print(city, d["image"])
+
 
         return render_template("explore.html", destinations=destinations)
     except Exception:
