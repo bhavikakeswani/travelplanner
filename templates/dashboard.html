@@ -80,7 +80,7 @@
         {% if past %}
           <h3 class="past-trips-title">Your Past Trips</h3>
           <div class="trip-cards">
-            {% for trip in past[:3] %}
+            {% for trip in past%}
               <a href="{{ url_for('trip_details', id=trip.id) }}" class="trip-card-link">
                 <div class="trip-card past-trip">
                   <img src="{{ trip.image if trip.image else 'https://via.placeholder.com/600x400' }}" alt="Trip Image">
