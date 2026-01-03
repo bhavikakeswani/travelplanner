@@ -8,7 +8,9 @@
   <section class="dashboard-container">
     <div class="dashboard-card">
       <header class="dashboard-header">
-        <h2>Welcome back, {{ current_user.username }} 🌍</h2>
+        <h2>
+          <span id="dashboard-greeting">Welcome</span>, {{ current_user.username }} 🌍
+        </h2>
         <a href="{{url_for('home')}}" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</a>
       </header>
 
@@ -109,4 +111,14 @@
       </footer>
     </div>
   </section>
+  <script>
+  const hour = new Date().getHours();
+  let greeting = "Welcome back";
+
+  if (hour < 12) greeting = "Good Morning";
+  else if (hour < 18) greeting = "Good Afternoon";
+  else greeting = "Good Evening";
+
+  document.getElementById("dashboard-greeting").textContent = greeting;
+</script>
 {% endblock %}
