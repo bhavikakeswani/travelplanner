@@ -143,3 +143,10 @@ This section showcases the user interface and key features of **TravelPlanner**.
 4. AI generates a realistic itinerary based on budget and duration
 5. Trips are organized into ongoing, upcoming, and past categories
 6. Users can edit, delete, and save itineraries for future reference
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.  
+You are free to use, modify, and distribute this project for personal and educational purposes.
