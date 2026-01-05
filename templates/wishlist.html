@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}My Wishlist{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <div class="dashboard-card">
+    <div class="dashboard-header">
+      <h2>My Wishlist</h2>
+      <a href="{{ url_for('dashboard') }}" class="logout-btn">Back</a>
+    </div>
+
+    <div class="trip-cards">
+      {% for item in items %}
+        <div class="trip-card">
+          <img src="{{ item.image }}" alt="{{ item.destination }}">
+          <div class="trip-info">
+            <h4>{{ item.destination }}</h4>
+            <a href="{{ url_for('remove_wishlist', id=item.id) }}">Remove</a>
+          </div>
+        </div>
+      {% else %}
+        <p>No destinations saved yet 🧳</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
