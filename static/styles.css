@@ -1042,3 +1042,31 @@ textarea:focus-visible {
   outline: 2px solid #ffb703;
   outline-offset: 3px;
 }
+
+.image-wrapper {
+  position: relative;
+}
+
+.wishlist-form {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.wishlist-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.wishlist-btn i {
+  font-size: 18px;
+  color: #ff4d6d !important;
+}
+
+.wishlist-btn:hover {
+  transform: scale(1.1);
+}
