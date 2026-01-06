@@ -168,6 +168,17 @@ class Trip(db.Model):
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     user: Mapped["User"] = relationship("User", back_populates="trips")
 
+class Wishlist(db.Model):
+    __tablename__ = "wishlists"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    destination: Mapped[str] = mapped_column(String(100), nullable=False)
+    image: Mapped[str] = mapped_column(String(255))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    user: Mapped["User"] = relationship("User", backref="wishlist")
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -283,6 +294,56 @@ def explore():
             {"name": "Bali", "desc": "Nature & temples", "image": city_image("Bali", "indonesia")},
         ]
         return render_template("explore.html", destinations=destinations)
+    
+@app.route('/wishlist/add', methods=['POST'])
+@login_required
+def add_to_wishlist():
+    destination = request.form.get('destination')
+    image = request.form.get('image')
+
+    exists = db.session.execute(
+        db.select(Wishlist).where(
+            Wishlist.user_id == current_user.id,
+            Wishlist.destination == destination
+        )
+    ).scalar_one_or_none()
+
+    if not exists:
+        item = Wishlist(
+            user_id=current_user.id,
+            destination=destination,
+            image=image
+        )
+        db.session.add(item)
+        db.session.commit()
+        flash("Added to wishlist ❤️", "success")
+    else:
+        flash("Already in wishlist 😉", "info")
+
+    return redirect(url_for('explore'))
+
+@app.route('/wishlist')
+@login_required
+def wishlist():
+    items = db.session.execute(
+        db.select(Wishlist)
+        .where(Wishlist.user_id == current_user.id)
+        .order_by(Wishlist.created_at.desc())
+    ).scalars().all()
+
+    return render_template("wishlist.html", items=items)
+
+@app.route('/wishlist/remove/<int:id>')
+@login_required
+def remove_wishlist(id):
+    item = db.session.get(Wishlist, id)
+
+    if item and item.user_id == current_user.id:
+        db.session.delete(item)
+        db.session.commit()
+        flash("Removed from wishlist ❌", "info")
+
+    return redirect(url_for('wishlist'))
 
 @app.route('/itinerary/<path:city>', methods=['GET', 'POST'])
 @login_required
