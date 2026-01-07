@@ -320,24 +320,24 @@ def add_to_wishlist():
     destination = request.form.get('destination')
     image = request.form.get('image')
 
-    exists = db.session.execute(
+    item = db.session.execute(
         db.select(Wishlist).where(
             Wishlist.user_id == current_user.id,
             Wishlist.destination == destination
         )
     ).scalar_one_or_none()
 
-    if not exists:
-        item = Wishlist(
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+    else:
+        new_item = Wishlist(
             user_id=current_user.id,
             destination=destination,
             image=image
         )
-        db.session.add(item)
+        db.session.add(new_item)
         db.session.commit()
-        flash("Added to wishlist ❤️", "success")
-    else:
-        flash("Already in wishlist 😉", "info")
 
     return redirect(url_for('explore'))
 
