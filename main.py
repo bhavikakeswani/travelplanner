@@ -323,7 +323,7 @@ def add_to_wishlist():
     item = db.session.execute(
         db.select(Wishlist).where(
             Wishlist.user_id == current_user.id,
-            Wishlist.destination == destination
+            db.func.lower(Wishlist.destination) == destination.lower()
         )
     ).scalar_one_or_none()
 
@@ -331,12 +331,13 @@ def add_to_wishlist():
         db.session.delete(item)
         db.session.commit()
     else:
-        new_item = Wishlist(
-            user_id=current_user.id,
-            destination=destination,
-            image=image
+        db.session.add(
+            Wishlist(
+                user_id=current_user.id,
+                destination=destination,
+                image=image
+            )
         )
-        db.session.add(new_item)
         db.session.commit()
 
     return redirect(url_for('explore'))
