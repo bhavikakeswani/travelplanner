@@ -29,29 +29,45 @@
             <div class="destination-wrapper destination-card" data-name="{{ d.name | lower }}">
 
               <div class="trip-card">
-                <a href="{{ url_for('itinerary', city=d.name) }}" class="trip-card-link">
-                  
-                  <div class="image-wrapper">
+
+                <div class="image-wrapper">
+                  <a href="{{ url_for('itinerary', city=d.name) }}" class="trip-card-link">
                     <img src="{{ d.image }}" alt="{{ d.name }}">
+                  </a>
 
-                    <form action="{{ url_for('add_to_wishlist') }}" method="POST" class="wishlist-form">
-                      <input type="hidden" name="destination" value="{{ d.name }}">
-                      <input type="hidden" name="image" value="{{ d.image }}">
-                      <button type="submit" class="wishlist-btn">
+                  <form
+                    action="{{ url_for('add_to_wishlist') }}"
+                    method="POST"
+                    class="wishlist-form"
+                  >
+                    <input type="hidden" name="destination" value="{{ d.name }}">
+                    <input type="hidden" name="image" value="{{ d.image }}">
+
+                    <button
+                      type="submit"
+                      class="wishlist-btn"
+                      onclick="event.stopPropagation()"
+                      aria-label="Add to wishlist"
+                    >
+                      {% if d.name.lower() in wishlisted %}
+                        <i class="fa-solid fa-heart filled-heart"></i>
+                      {% else %}
                         <i class="fa-regular fa-heart"></i>
-                      </button>
-                    </form>
-                  </div>
+                      {% endif %}
+                    </button>
+                  </form>
+                </div>
 
+                <a href="{{ url_for('itinerary', city=d.name) }}" class="trip-card-link">
                   <div class="trip-info">
                     <h4>{{ d.name }}</h4>
                     <p>{{ d.desc }}</p>
                   </div>
-
                 </a>
+
               </div>
             </div>
-            {% endfor %}
+          {% endfor %}
 
         </div>
       </div>

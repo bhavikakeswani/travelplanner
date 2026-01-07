@@ -268,22 +268,29 @@ def explore():
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}]
         )
+
         raw = chat.choices[0].message.content.strip()
         raw = raw.replace("```json", "").replace("```", "").strip()
         destinations = json.loads(raw)
-        for d in destinations:
-            city = d["name"]
-            country = CITY_TO_COUNTRY.get(normalize_city(city))
-            d["image"] = city_image(city, country)
 
         for d in destinations:
             city = d["name"]
             country = CITY_TO_COUNTRY.get(normalize_city(city))
             d["image"] = city_image(city, country)
-            print(city, d["image"])
 
+        wishlisted = {
+            w.destination.lower()
+            for w in db.session.execute(
+                db.select(Wishlist).where(Wishlist.user_id == current_user.id)
+            ).scalars().all()
+        }
 
-        return render_template("explore.html", destinations=destinations)
+        return render_template(
+            "explore.html",
+            destinations=destinations,
+            wishlisted=wishlisted
+        )
+
     except Exception:
         destinations = [
             {"name": "Paris", "desc": "City of lights", "image": city_image("Paris", "france")},
@@ -293,7 +300,19 @@ def explore():
             {"name": "Rome", "desc": "History & food", "image": city_image("Rome", "italy")},
             {"name": "Bali", "desc": "Nature & temples", "image": city_image("Bali", "indonesia")},
         ]
-        return render_template("explore.html", destinations=destinations)
+
+        wishlisted = {
+            w.destination.lower()
+            for w in db.session.execute(
+                db.select(Wishlist).where(Wishlist.user_id == current_user.id)
+            ).scalars().all()
+        }
+
+        return render_template(
+            "explore.html",
+            destinations=destinations,
+            wishlisted=wishlisted
+        )
     
 @app.route('/wishlist/add', methods=['POST'])
 @login_required
