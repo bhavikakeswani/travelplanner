@@ -1111,3 +1111,28 @@ body.wishlist-page .trip-info a {
 body.wishlist-page .trip-info a:hover {
   text-decoration: underline;
 }
+
+.trip-info {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trip-info h4 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.trip-info a {
+  font-size: 15px;       
+  font-weight: 600;
+  color: #ff6b6b;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.trip-info a:hover {
+  color: #ff9b9b;
+  transform: scale(1.05);
+}
