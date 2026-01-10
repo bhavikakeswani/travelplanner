@@ -1145,3 +1145,11 @@ body.wishlist-page .trip-info a:hover {
   transform: scale(0.95);
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
+
+.wishlist-btn i {
+  transition: color 0.2s ease;
+}
+
+.wishlist-btn:hover i {
+  color: #ff1f4d !important;
+}
