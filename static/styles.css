@@ -1153,3 +1153,8 @@ body.wishlist-page .trip-info a:hover {
 .wishlist-btn:hover i {
   color: #ff1f4d !important;
 }
+
+body.wishlist-page .empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+}

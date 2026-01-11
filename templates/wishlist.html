@@ -23,7 +23,15 @@
           </div>
         </div>
       {% else %}
-        <p>No destinations saved yet 🧳</p>
+        <div class="empty-state">
+          <p>No destinations saved yet.</p>
+          <p class="empty-subtext">
+            Your wishlist is empty. Start exploring and save your favorite places.
+          </p>
+          <a href="{{ url_for('explore') }}" class="auth-btn">
+            Explore Destinations
+          </a>
+        </div>
       {% endfor %}
     </div>
   </div>
