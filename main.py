@@ -68,6 +68,18 @@ COUNTRY_COST_BASIS = {
     "indonesia": {"hotel": 450000, "meal": 90000, "transport": 25000, "activity": 80000}
 }
 
+@app.context_processor
+def inject_wishlist_count():
+    if current_user.is_authenticated:
+        count = db.session.execute(
+            db.select(db.func.count(Wishlist.id))
+            .where(Wishlist.user_id == current_user.id)
+        ).scalar()
+    else:
+        count = 0
+
+    return dict(wishlist_count=count)
+
 def fmt_date(d: date) -> str:
     return d.strftime("%d %b %Y")
 
