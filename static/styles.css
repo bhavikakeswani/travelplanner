@@ -1185,3 +1185,30 @@ body.wishlist-page .empty-state {
 .nav-links li {
   margin-right: 7px;
 }
+
+body.wishlist-page .trip-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+body.wishlist-page .trip-info h4 {
+  margin: 0;
+  font-size: 17px;
+  color: #ffb703;
+}
+
+body.wishlist-page .trip-info .remove-btn {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff6b6b;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+body.wishlist-page .trip-info .remove-btn:hover {
+  color: #ff9b9b;
+  text-decoration: underline;
+}
