@@ -1212,3 +1212,15 @@ body.wishlist-page .trip-info .remove-btn:hover {
   color: #ff9b9b;
   text-decoration: underline;
 }
+
+body.wishlist-page .trip-info .remove-btn {
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body.wishlist-page .trip-info .remove-btn:hover {  
+  text-decoration: none;
+  transform: scale(1.2);
+}
