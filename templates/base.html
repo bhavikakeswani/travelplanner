@@ -6,31 +6,65 @@
     <title>{% block title %}Travel App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
 
+    <div id="toast" class="toast"></div>
+
     {% include 'navbar.html' %}
+
     <main>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                {% for category, message in messages %}
-                    <div class="flash {{ category }}">
-                    {{ message }}
+        {% if body_class != "wishlist-page" %}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-                </div>
-            {% endif %}
+                {% endif %}
             {% endwith %}
-            
+        {% endif %}
+
         {% block content %}{% endblock %}
-        
         {% block scripts %}{% endblock %}
     </main>
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2500);
+        }
+    </script>
+
+    {% if body_class == "wishlist-page" %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <script type="application/json" id="toast-data">
+                    {{ messages|tojson }}
+                </script>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+
+    <script>
+        const toastDataEl = document.getElementById("toast-data");
+        if (toastDataEl) {
+            const toastMessages = JSON.parse(toastDataEl.textContent);
+            toastMessages.forEach(([_, message]) => showToast(message));
+        }
+    </script>
 
 </body>
 </html>
