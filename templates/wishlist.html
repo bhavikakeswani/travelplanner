@@ -37,3 +37,18 @@
   </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div id="wishlist-toast-data" data-messages='{{ messages | tojson | safe }}'></div>
+
+    <script>
+      const dataEl = document.getElementById("wishlist-toast-data");
+      const wishlistMessages = JSON.parse(dataEl.dataset.messages || "[]");
+
+      wishlistMessages.forEach(msg => showToast(msg));
+    </script>
+  {% endif %}
+{% endwith %}
+{% endblock %}
