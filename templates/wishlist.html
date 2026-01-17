@@ -24,9 +24,13 @@
         </div>
       {% else %}
         <div class="empty-state">
-          <p>No destinations saved yet.</p>
+          <img src="{{ url_for('static', filename='images/empty-wishlist.png') }}" 
+              alt="Empty Wishlist" class="empty-img">
+
+          <h3>Your wishlist is feeling lonely 💛</h3>
+
           <p class="empty-subtext">
-            Your wishlist is empty. Start exploring and save your favorite places.
+            Start exploring and save your favorite places.
           </p>
           <a href="{{ url_for('explore') }}" class="auth-btn">
             Explore Destinations

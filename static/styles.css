@@ -1250,3 +1250,27 @@ body.wishlist-page .trip-info .remove-btn:hover {
   opacity: 1;
   transform: translateY(0);
 }
+
+.empty-state {
+  margin-top: 30px;
+  padding: 20px;
+  text-align: center;
+}
+
+.empty-state .empty-img {
+  width: 200px;
+  margin-bottom: 15px;
+  opacity: 0.9;
+}
+
+.empty-state h3 {
+  font-size: 1.3rem;
+  color: #ffb703;
+  margin-bottom: 8px;
+}
+
+.empty-subtext {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin-bottom: 20px;
+}
