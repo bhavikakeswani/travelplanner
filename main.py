@@ -373,7 +373,7 @@ def remove_wishlist(id):
     if item and item.user_id == current_user.id:
         db.session.delete(item)
         db.session.commit()
-        flash("Removed from wishlist ❌", "info")
+        flash(f"{item.destination} removed from wishlist", "info")
 
     return redirect(url_for('wishlist'))
 

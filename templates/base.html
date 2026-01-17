@@ -48,7 +48,7 @@
         }
     </script>
 
-    {% if body_class == "wishlist-page" %}
+    {% if 'wishlist' in request.path %}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <script type="application/json" id="toast-data">
