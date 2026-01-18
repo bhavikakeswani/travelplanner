@@ -367,7 +367,7 @@ def wishlist():
 
 @app.route('/wishlist/remove/<int:id>')
 @login_required
-def remove_wishlist(id):
+def remove_wishlist_get(id):
     item = db.session.get(Wishlist, id)
 
     if item and item.user_id == current_user.id:
@@ -376,6 +376,45 @@ def remove_wishlist(id):
         flash(f"{item.destination} removed from wishlist", "info")
 
     return redirect(url_for('wishlist'))
+
+@app.route('/wishlist/remove', methods=['POST'])
+@login_required
+def remove_wishlist():
+    item_id = request.form.get("item_id")
+    item = db.session.get(Wishlist, item_id)
+
+    if item and item.user_id == current_user.id:
+        db.session.delete(item)
+        db.session.commit()
+        return {"status": "removed"}
+
+    return {"status": "error"}
+
+@app.route('/wishlist/undo', methods=['POST'])
+@login_required
+def undo_wishlist():
+    destination = request.form.get("destination")
+    image = request.form.get("image")
+
+    if not destination:
+        return {"status": "error"}
+
+    existing = db.session.execute(
+        db.select(Wishlist).where(
+            Wishlist.user_id == current_user.id,
+            db.func.lower(Wishlist.destination) == destination.lower()
+        )
+    ).scalar_one_or_none()
+
+    if not existing:
+        db.session.add(Wishlist(
+            user_id=current_user.id,
+            destination=destination,
+            image=image
+        ))
+        db.session.commit()
+
+    return {"status": "restored"}
 
 @app.route('/itinerary/<path:city>', methods=['GET', 'POST'])
 @login_required
