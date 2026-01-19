@@ -17,9 +17,14 @@
           <img src="{{ item.image }}" alt="{{ item.destination }}">
           <div class="trip-info">
             <h4>{{ item.destination }}</h4>
-            <a href="{{ url_for('remove_wishlist', id=item.id) }}" class="remove-btn">
+            <button
+              class="remove-btn"
+              data-id="{{ item.id }}"
+              data-destination="{{ item.destination }}"
+              data-image="{{ item.image }}"
+              onclick="removeWishlist(this)">
               ❌
-            </a>
+            </button>
           </div>
         </div>
       {% else %}
@@ -40,4 +45,64 @@
     </div>
   </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+  function removeWishlist(btn) {
+    const itemId = btn.dataset.id;
+    const destination = btn.dataset.destination;
+    const image = btn.dataset.image;
+
+    fetch("/wishlist/remove", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ item_id: itemId })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.status === "removed") {
+        btn.closest(".trip-card").remove();
+        showUndoToast(destination, image);
+      } else {
+        alert("Failed to remove item.");
+      }
+    });
+  }
+
+  function showUndoToast(destination, image) {
+    let toast = document.getElementById("undo-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "undo-toast";
+      toast.className = "undo-toast";
+      document.body.appendChild(toast);
+    }
+
+    toast.innerHTML = `
+      ${destination} removed.
+      <span onclick="undoRemove('${destination}', '${image}')">Undo</span>
+    `;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 5000);
+  }
+
+  function undoRemove(destination, image) {
+    fetch("/wishlist/undo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ destination: destination, image: image })
+    }).then(res => res.json())
+      .then(data => {
+        if(data.status === "restored") {
+          location.reload();
+        } else {
+          console.log("Remove failed");
+        }
+      });
+  }
+</script>
 {% endblock %}
