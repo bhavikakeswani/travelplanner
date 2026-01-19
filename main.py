@@ -380,7 +380,9 @@ def remove_wishlist_get(id):
 @app.route('/wishlist/remove', methods=['POST'])
 @login_required
 def remove_wishlist():
-    item_id = request.form.get("item_id")
+    data = request.get_json()
+    item_id = data.get("item_id")
+
     item = db.session.get(Wishlist, item_id)
 
     if item and item.user_id == current_user.id:
@@ -393,8 +395,9 @@ def remove_wishlist():
 @app.route('/wishlist/undo', methods=['POST'])
 @login_required
 def undo_wishlist():
-    destination = request.form.get("destination")
-    image = request.form.get("image")
+    data = request.get_json()
+    destination = data.get("destination")
+    image = data.get("image")
 
     if not destination:
         return {"status": "error"}
