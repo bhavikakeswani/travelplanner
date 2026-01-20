@@ -166,11 +166,6 @@ body.edit-trip-page .auth-container .edit-auth-container {
   transition: all 0.3s ease;
 }
 
-.auth-btn:hover {
-  background: #ffd166;
-  transform: translateY(-2px);
-}
-
 .dashboard-actions {
   text-align: center;
   margin-top: 50px;
@@ -296,10 +291,6 @@ body.dashboard-page {
   width: 100%;
   height: 150px;
   object-fit: cover;
-}
-
-.trip-info {
-  padding: 12px 15px;
 }
 
 .trip-info h4 {
@@ -518,14 +509,6 @@ body.profile-page .container {
   margin-top: 0;
 }
 
-.profile-card {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
-  padding: 40px 50px;
-  backdrop-filter: blur(10px);
-}
-
 .profile-img img {
   width: 100px;
   height: 100px;
@@ -581,12 +564,6 @@ body.explore-page {
   overflow-y: auto;
   padding-bottom: 60px;
   padding-top: 80px;
-}
-
-.btn,
-.auth-btn,
-.auth-btn a {
-  text-decoration: none;
 }
 
 .btn,
@@ -763,14 +740,6 @@ body.mytrips-page {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.itinerary-box {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  margin-top: 20px;
 }
 
 .create-trip-card {
