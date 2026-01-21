@@ -23,6 +23,10 @@
 
       <div class="trip-summary">
         <h3>Popular Places</h3>
+        <p id="noResults" style="display:none; text-align:center; opacity:0.7;">
+          No destinations found.
+        </p>
+
         <div class="trip-cards">
 
           {% for d in destinations %}
@@ -86,50 +90,72 @@
   <script>
     const searchInput = document.getElementById("searchInput");
     const cardsContainer = document.querySelector(".trip-cards");
-    const originalCards = Array.from(document.querySelectorAll(".destination-card"));
-    let dynamicCard = null;
+    const noResults = document.getElementById("noResults");
 
-    function createDynamicCard(city) {
-      const formattedCity = city.charAt(0).toUpperCase() + city.slice(1);
-      const a = document.createElement("a");
-      a.href = `/itinerary/${encodeURIComponent(city)}`;
-      a.className = "trip-card-link destination-card";
-      a.dataset.name = city.toLowerCase();
-      a.innerHTML = `
-        <div class="trip-card">
-          <img 
-            src="https://picsum.photos/seed/${encodeURIComponent(city)}/600/400"
-            alt="${formattedCity}"
-            onerror="this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80'"
-          >
-          <div class="trip-info">
-            <h4>${formattedCity}</h4>
-            <p>AI-generated itinerary available</p>
-          </div>
-        </div>
-      `;
-      return a;
-    }
+    let timeout = null;
 
     searchInput.addEventListener("input", function () {
+      clearTimeout(timeout);
+
       const query = this.value.toLowerCase().trim();
+
+      timeout = setTimeout(() => {
+        filterOrFetch(query);
+      }, 400);
+    });
+
+    function filterOrFetch(query) {
+      const cards = document.querySelectorAll(".destination-card");
       let matches = 0;
 
-      if (dynamicCard) {
-        dynamicCard.remove();
-        dynamicCard = null;
-      }
-
-      originalCards.forEach(card => {
-        const match = card.dataset.name.includes(query);
-        card.style.display = match ? "block" : "none";
+      cards.forEach(card => {
+        const name = card.dataset.name;
+        const match = name.includes(query);
+        card.style.display = match ? "" : "none";
         if (match) matches++;
       });
 
       if (query && matches === 0) {
-        dynamicCard = createDynamicCard(query);
-        cardsContainer.prepend(dynamicCard);
+        fetch(`/search-destination?city=${encodeURIComponent(query)}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.found) {
+              createNewCard(data.name);
+              noResults.style.display = "none";
+            } else {
+              noResults.style.display = "block";
+            }
+          });
+      } else {
+        noResults.style.display = "none";
       }
-    });
+    }
+
+    function createNewCard(city) {
+      if (document.querySelector(`[data-name="${city.toLowerCase()}"]`)) return;
+
+      const card = document.createElement("div");
+      card.className = "destination-wrapper destination-card";
+      card.dataset.name = city.toLowerCase();
+
+      card.innerHTML = `
+        <div class="trip-card">
+          <div class="image-wrapper">
+            <a href="/itinerary/${city}" class="trip-card-link">
+              <img src="https://picsum.photos/seed/${city}/600/400" alt="${city}">
+            </a>
+          </div>
+          <a href="/itinerary/${city}" class="trip-card-link">
+            <div class="trip-info">
+              <h4>${city}</h4>
+              <p>Explore this destination</p>
+            </div>
+          </a>
+        </div>
+      `;
+
+      cardsContainer.prepend(card);
+    }
   </script>
+
 {% endblock %}

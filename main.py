@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, Float, Text, Date, DateTime, ForeignKey
@@ -9,6 +9,7 @@ from datetime import datetime,date
 from dotenv import load_dotenv
 from groq import Groq
 import urllib.parse
+import requests
 import smtplib
 import hashlib
 import json
@@ -564,6 +565,39 @@ def save_itinerary():
 
     flash("Trip added!", "success")
     return redirect(url_for('my_trips'))
+
+@app.route("/search-destination")
+@login_required
+def search_destination():
+    city = request.args.get("city", "").strip()
+
+    if not city:
+        return jsonify({"found": False})
+
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {
+        "q": city,
+        "format": "json",
+        "limit": 1
+    }
+
+    headers = {"User-Agent": "travelplanner-app"}
+
+    try:
+        res = requests.get(url, params=params, headers=headers, timeout=5)
+        data = res.json()
+
+        if not data:
+            return jsonify({"found": False})
+
+        place = data[0]
+
+        return jsonify({
+            "found": True,
+            "name": place["display_name"].split(",")[0]
+        })
+    except Exception:
+        return jsonify({"found": False})
 
 @app.route('/edit_trip/<int:id>', methods=['GET', 'POST'])
 @login_required
