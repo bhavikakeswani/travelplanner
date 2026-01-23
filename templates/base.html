@@ -15,6 +15,7 @@
 <body class="{% block body_class %}{% endblock %}">
 
     <div id="toast" class="toast"></div>
+    <div id="loader" class="loader hidden"></div>
 
     {% include 'navbar.html' %}
 
@@ -45,6 +46,14 @@
             setTimeout(() => {
                 toast.classList.remove("show");
             }, 2500);
+        }
+
+        function showLoader() {
+            document.getElementById("loader").classList.remove("hidden");
+        }
+
+        function hideLoader() {
+            document.getElementById("loader").classList.add("hidden");
         }
     </script>
 
