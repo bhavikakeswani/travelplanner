@@ -70,7 +70,12 @@
     .then(res => res.json())
     .then(data => {
       if (data.status === "removed") {
-        btn.closest(".trip-card").remove();
+        const card = btn.closest(".trip-card");
+        card.classList.add("removing");
+
+        setTimeout(() => {
+          card.remove();
+        }, 300);
         showUndoToast(destination, image);
       } else {
         alert("Failed to remove item.");

@@ -1288,3 +1288,12 @@ body.wishlist-page .trip-info .remove-btn:focus {
     transform: rotate(360deg);
   }
 }
+
+.trip-card {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.trip-card.removing {
+  opacity: 0;
+  transform: translateX(20px);
+}
