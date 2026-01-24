@@ -53,6 +53,15 @@
     const destination = btn.dataset.destination;
     const image = btn.dataset.image;
 
+    const confirmed = confirm(
+      `Are you sure you want to remove "${destination}" from your wishlist?`
+    );
+
+    if (!confirmed) return;
+
+    btn.disabled = true;
+    btn.innerText = "⏳";
+
     fetch("/wishlist/remove", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -60,12 +69,19 @@
     })
     .then(res => res.json())
     .then(data => {
-      if(data.status === "removed") {
+      if (data.status === "removed") {
         btn.closest(".trip-card").remove();
         showUndoToast(destination, image);
       } else {
         alert("Failed to remove item.");
+        btn.disabled = false;
+        btn.innerText = "❌";
       }
+    })
+    .catch(() => {
+      alert("Something went wrong.");
+      btn.disabled = false;
+      btn.innerText = "❌";
     });
   }
 
