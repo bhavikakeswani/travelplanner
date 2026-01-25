@@ -1297,3 +1297,21 @@ body.wishlist-page .trip-info .remove-btn:focus {
   opacity: 0;
   transform: translateX(20px);
 }
+
+@media (max-width: 320px) {
+  .trip-card {
+    font-size: 0.9rem;
+  }
+  .dashboard-header h2 {
+    font-size: 1.4rem;
+  }
+  .dashboard-card {
+    padding: 15px 20px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .trip-cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
